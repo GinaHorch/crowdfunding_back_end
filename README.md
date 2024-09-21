@@ -1,5 +1,5 @@
 # crowdfunding_back_end
-{{ Gina }}
+Gina
 
 ## Planning:
 ### Concept/Name
