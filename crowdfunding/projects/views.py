@@ -26,6 +26,7 @@ class ProjectList(APIView):
       )
   
 class ProjectDetail(APIView):
+   
    def get_object(self, pk):
        try:
            project = Project.objects.get(pk=pk)
@@ -39,6 +40,7 @@ class ProjectDetail(APIView):
        return Response(serializer.data)
 
 class PledgeList(APIView):
+   
    def get(self, request):
       pledges = Pledge.objects.all()
       serializer = PledgeSerializer(pledges, many=True)
