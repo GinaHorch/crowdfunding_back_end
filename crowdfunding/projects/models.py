@@ -23,7 +23,7 @@ class Project(models.Model):
       related_name='project_category'
    ) 
    organisation = models.ForeignKey(
-      'users.CustomUser',
+      'organisations.OrganisationProfile',
       on_delete=models.CASCADE,
       related_name='projects'
    )

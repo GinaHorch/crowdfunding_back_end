@@ -15,9 +15,3 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ['id', 'title', 'description', 'target_amount', 'current_amount']
-
-class OrganisationSerializer(serializers.ModelSerializer):
-    projects = ProjectSerializer(many=True, read_only=True)
-    class Meta:
-        model = CustomUser
-        fields = ['id', 'username', 'organisation_name', 'projects']

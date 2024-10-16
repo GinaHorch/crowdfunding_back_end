@@ -5,7 +5,9 @@ from rest_framework import status
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from .models import CustomUser
+from organisations.models import OrganisationProfile
 from .serializers import CustomUserSerializer
+from organisations.serializers import OrganisationProfileSerializer
 from projects.models import Project
 
 class CustomUserList(APIView):

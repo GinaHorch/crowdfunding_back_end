@@ -12,6 +12,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     date_created = models.DateTimeField(auto_now_add=True)
     image_url = models.URLField(null=True, blank=True)
+    username = models.CharField(max_length=150, unique=True)
 
     # Fields specific to 'Supporter'
     pledge_id = models.ForeignKey(
@@ -21,23 +22,12 @@ class CustomUser(AbstractUser):
         null=True, blank=True
     )
 
-    # Fields specific to 'Organisation'
-    organisation_name = models.CharField(max_length=255, null=True, blank=True)
-    contact_person = models.CharField(max_length=255, null=True, blank=True)
-    phone_number = models.CharField(max_length=15, null=True, blank=True)
-    project_id = models.ForeignKey(
-        'projects.Project',
-        on_delete=models.CASCADE,
-        related_name='organisation_projects',
-        null=True, blank=True
-    )
-
     # Define a method to check user type
     def is_supporter(self):
         return self.user_type == 'supporter'
     
     def is_organisation(self):
         return self.user_type == 'organisation'
-    
+     
     def __str__(self):
        return self.username
