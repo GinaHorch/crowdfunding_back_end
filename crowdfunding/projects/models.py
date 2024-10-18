@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from organisations.models import OrganisationProfile
 
 # Create your models here.
 class Project(models.Model):
@@ -23,7 +24,7 @@ class Project(models.Model):
       related_name='project_category'
    ) 
    organisation = models.ForeignKey(
-      'organisations.OrganisationProfile',
+      OrganisationProfile,
       on_delete=models.CASCADE,
       related_name='projects'
    )
