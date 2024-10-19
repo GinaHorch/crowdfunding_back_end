@@ -2,12 +2,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework import serializers
+from rest_framework import generics
 from django.http import Http404
-from .models import Project, Pledge
+from .models import Project, Pledge, Category
 from organisations.models import OrganisationProfile
 from users.serializers import CustomUser
 from organisations.serializers import OrganisationProfileSerializer
-from .serializers import ProjectSerializer, PledgeSerializer, ProjectDetailSerializer, PledgeDetailSerializer
+from .serializers import ProjectSerializer, PledgeSerializer, CategorySerializer, ProjectDetailSerializer, PledgeDetailSerializer
 from .permissions import IsOwnerOrReadOnly, IsSupporterOrReadOnly
 class ProjectList(APIView):
   permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -18,8 +19,9 @@ class ProjectList(APIView):
       return Response(serializer.data)
   
   def post(self, request):
-      serializer = ProjectSerializer(data=request.data)
-      if serializer.is_valid():
+      if request.user.is_authenticated:
+        serializer = ProjectSerializer(data=request.data)
+        if serializer.is_valid():
           serializer.save(owner=request.user)
           return Response(
               serializer.data,
@@ -28,7 +30,11 @@ class ProjectList(APIView):
       return Response(
           serializer.errors,
           status=status.HTTP_400_BAD_REQUEST
-      )
+          )
+      return Response(
+       {"detail": "Authentication required to create a project."},
+       status=status.HTTP_403_FORBIDDEN
+    )
   
 class ProjectDetail(APIView):
    
@@ -68,8 +74,8 @@ class ProjectDetail(APIView):
 class OrganisationSerializer(serializers.ModelSerializer):
     projects = ProjectSerializer(many=True, read_only=True)
     class Meta:
-        model = CustomUser
-        fields = ['id', 'username', 'organisation_name', 'projects']
+        model = OrganisationProfile
+        fields = ['id', 'organisation_name', 'projects', 'organisation_contact', 'organisation_phone_number', 'organisation_ABN', 'is_charity']
         
 class PledgeList(APIView):
    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -80,8 +86,9 @@ class PledgeList(APIView):
       return Response(serializer.data)
 
    def post(self, request):
-      serializer = PledgeSerializer(data=request.data)
-      if serializer.is_valid():
+      if request.user.is_authenticated:
+        serializer = PledgeSerializer(data=request.data)
+        if serializer.is_valid():
           serializer.save(supporter=request.user)
           return Response(
               serializer.data,
@@ -90,6 +97,10 @@ class PledgeList(APIView):
       return Response(
           serializer.errors,
           status=status.HTTP_400_BAD_REQUEST
+          )
+      return Response(
+          {"detail": "Authentication required to make a pledge."},
+          status=status.HTTP_403_FORBIDDEN
       )
 class PledgeDetail(APIView):
     permission_classes = [
@@ -125,3 +136,6 @@ class PledgeDetail(APIView):
            serializer.errors,
            status=status.HTTP_400_BAD_REQUEST
        )
+class CategoryListCreate(generics.ListCreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer

@@ -63,11 +63,14 @@ class CustomAuthToken(ObtainAuthToken):
             context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
-        organisation = serializer.validated_data['organisation']
-        token, created = Token.objects.get_or_create(organisation=organisation)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+
+        organisation = user.organisation_profile if hasattr(user, 'organisation_profile') else None
 
         return Response({
             'token': token.key,
-            'organisation_id': organisation.id,
-            'email': organisation.email
+            'user_id': user.pk,
+            'email': user.email,
+            'organisation': organisation.organisation_name if organisation else None,
         })
