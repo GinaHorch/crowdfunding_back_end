@@ -18,12 +18,12 @@ class Project(models.Model):
    location = models.TextField()
    is_open = models.BooleanField(default=True)
    date_created = models.DateTimeField(auto_now_add=True)
-   end_date = models.DateTimeField()
+   end_date = models.DateTimeField(null=True)
    
    owner = models.ForeignKey(
        get_user_model(),
        on_delete=models.CASCADE,
-       related_name='organisation_projects'
+       related_name='projects'
    )
    category = models.ForeignKey(
       Category,

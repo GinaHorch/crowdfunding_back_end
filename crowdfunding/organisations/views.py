@@ -24,9 +24,7 @@ class OrganisationProfileList(APIView):
     def post(self, request):
         serializer = OrganisationProfileSerializer(data=request.data)
         if serializer.is_valid():
-            organisation = serializer.save()
-            organisation.user = request.user
-            organisation.save()
+            serializer.save(user=request.user)
             return Response(
                 serializer.data,
                 status=status.HTTP_201_CREATED

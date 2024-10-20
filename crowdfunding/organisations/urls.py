@@ -4,6 +4,6 @@ from .api_views import OrganisationManagementViewSet
 from .views import OrganisationProfileList, OrganisationProfileDetail
  
 urlpatterns = [
-  path('organisations/', views.OrganisationProfileList.as_view()),
-  path('organisations/<int:pk>/', views.OrganisationProfileDetail.as_view()),
+  path('', OrganisationProfileList.as_view(), name='organisation-list-create'),
+  path('<int:pk>/', OrganisationProfileDetail.as_view(), name='organisation-detail'),
 ]

@@ -5,10 +5,10 @@ from .models import OrganisationProfile
 from projects.serializers import ProjectSerializer
  
 class OrganisationProfileSerializer(serializers.ModelSerializer):
-   projects = ProjectSerializer(many=True, read_only=True, source='projects')  # Include projects
+   projects = ProjectSerializer(many=True, read_only=True)  # Include projects
    class Meta:
        model = OrganisationProfile
-       fields = ['id', 'organisation_name', 'organisation_contact', 'organisation_phone_number', 'organisation_ABN', 'is_charity', 'projects']
+       fields = ['id', 'organisation_name', 'organisation_contact', 'organisation_phone_number', 'organisation_ABN', 'is_charity', 'projects', 'user']
 
 class CustomUserSerializer(serializers.ModelSerializer):
     organisation_profile = OrganisationProfileSerializer()

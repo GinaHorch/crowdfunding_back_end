@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
+from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .models import CustomUser
 from organisations.models import OrganisationProfile
@@ -12,6 +13,7 @@ from organisations.serializers import OrganisationProfileSerializer
 from projects.models import Project
 
 class CustomUserList(APIView):
+  permission_classes = [permissions.AllowAny]
   def get(self, request):
       users = CustomUser.objects.all()
       

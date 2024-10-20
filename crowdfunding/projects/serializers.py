@@ -12,16 +12,16 @@ class ProjectSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.id')
     class Meta:
       model = Project
-      fields = ['id', 'title', 'description', 'target_amount', 'current_amount', 'owner', 'date_created', 'is_open', 'category']
+      fields = ['id', 'title', 'description', 'target_amount', 'current_amount', 'owner', 'date_created', 'is_open', 'end_date', 'category', 'organisation']
 
 class CategorySerializer(serializers.ModelSerializer):
    class Meta:
       model = Category
-      fields = ['id', 'name']
+      fields = '__all__'
 class ProjectDetailSerializer(ProjectSerializer):
   pledges = PledgeSerializer(many=True, read_only=True)
-
-  class Meta(ProjectSerializer):
+  class Meta:
+     model = Project
      fields = ProjectSerializer.Meta.fields + ['pledges']
 
   def update(self, instance, validated_data):
