@@ -16,13 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from users.views import CustomAuthToken
-from organisations.views import CustomAuthToken
+from users.views import CustomAuthToken as UserAuthToken
+from organisations.views import CustomAuthToken as OrgAuthToken
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('projects.urls')),
-    path('', include('users.urls')),
-    path('api-token-auth/', CustomAuthToken.as_view(), name='api_token_auth'),
-    path('', include ('organisations.urls'))
+    path('projects/', include('projects.urls')),
+    path('users/', include('users.urls')),
+    path('api-token-auth/users/', UserAuthToken.as_view(), name='api_token_auth_users'),
+    path('api-toke-auth/organisations/', OrgAuthToken.as_view(), name='api_token_auth_organisations'),
+    path('organisations/', include ('organisations.urls'))
 ]

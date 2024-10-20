@@ -16,3 +16,10 @@ class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = '__all__'
+
+class OrganisationSerializer(serializers.ModelSerializer):
+    projects = ProjectSerializer(many=True, read_only=True)
+    class Meta:
+        model = OrganisationProfile
+        fields = ['id', 'organisation_name', 'projects', 'organisation_contact', 'organisation_phone_number', 'organisation_ABN', 'is_charity']
+        

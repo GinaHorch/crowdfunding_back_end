@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .models import CustomUser
 from organisations.models import OrganisationProfile
 from .serializers import CustomUserSerializer
@@ -41,6 +42,27 @@ class CustomUserDetail(APIView):
        user = self.get_object(pk)
        serializer = CustomUserSerializer(user)
        return Response(serializer.data)
+   
+   def put(self, request, pk):
+       user = self.get_object(pk)
+       serializer = CustomUserSerializer(user, data=request.data)
+       if serializer.is_valid():
+           serializer.save()
+           return Response(serializer.data)
+       return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+   
+   def patch(self, requst, pk):
+       user = self.get_object(pk)
+       serializer = CustomUserSerializer(user, data=request.data, parial=True)
+       if serializer.is_valid():
+           serializer.save()
+           return Response(serializer.data)
+       return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+   
+   def delete(self, request, pk):
+       user = self.get_object(pk)
+       user.delete()
+       return Response(status=status.HTTP_204_NO_CONTENT)
 
 class CustomAuthToken(ObtainAuthToken):
   def post(self, request, *args, **kwargs):

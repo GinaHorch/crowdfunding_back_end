@@ -14,20 +14,12 @@ class CustomUser(AbstractUser):
     image_url = models.URLField(null=True, blank=True)
     username = models.CharField(max_length=150, unique=True)
 
-    # Fields specific to 'Supporter'
-    pledge_id = models.ForeignKey(
-        'projects.Pledge',
-        on_delete=models.CASCADE,
-        related_name='supporter_pledges',
-        null=True, blank=True
-    )
-
-    # Define a method to check user type
+   # Define a method to check user type
     def is_supporter(self):
-        return self.user_type == 'supporter'
+        return self.user_type == 1
     
     def is_organisation(self):
-        return self.user_type == 'organisation'
+        return self.user_type == 2
      
     def __str__(self):
        return self.username

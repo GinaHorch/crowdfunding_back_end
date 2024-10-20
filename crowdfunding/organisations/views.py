@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -11,7 +10,6 @@ from users.models import CustomUser
 from .models import OrganisationProfile
 from users.serializers import CustomUserSerializer
 from .serializers import OrganisationProfileSerializer
-from projects.models import Project
 # Create your views here.
 
 class OrganisationProfileList(APIView):
@@ -26,7 +24,9 @@ class OrganisationProfileList(APIView):
     def post(self, request):
         serializer = OrganisationProfileSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            organisation = serializer.save()
+            organisation.user = request.user
+            organisation.save()
             return Response(
                 serializer.data,
                 status=status.HTTP_201_CREATED
