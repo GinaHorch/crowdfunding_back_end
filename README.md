@@ -53,21 +53,34 @@ Culture4Kids: Empowering Aboriginal and Torres Strait Islander kids
 
 ## Planning:
 ### Concept/Name
-The crowdfunding platform Culture4Kids connects Aboriginal and Torres Strait Islander kids who have been taken into State care with their culture, country and community through supporting grassroots cultural programs like dance, art, traditional practices, language classes, cultural camps, on country trips, boys cultural pathways, or girls cultural pathways. Aboriginal led organisations who are looking to crowdfund existing cultural programs or would like to add new cultural programs, can add/create the cultural program as a campaign/project to raise funds. 
+The crowdfunding platform Culture4Kids connects Aboriginal and Torres Strait Islander kids who have been taken into State care with their culture, country and community through supporting grassroots cultural programs like dance, art, traditional practices, language classes, cultural camps, on country trips, boys cultural pathways, or girls cultural pathways. Aboriginal led organisations who are looking to crowdfund existing cultural programs or would like to add new cultural programs, can add/create the cultural program as a project to raise funds. There will be an indication if the organisation is a registered charity with the option to receive tax invoices for donations of more than $2AUD.
 
 ### Intended Audience/User Stories
-Who are your intended audience? 
+Who are your intended audience (creating projects)? 
 - Aboriginal and/or Torres Strait Islander Community Controlled Organisations (ACCOs)
 - Aboriginal and/or Torres Strait Islander Corporations
 - Aboriginal and/or Torres Strait Islander Community Centres
 - Aboriginal and/or Torres Strait Islander language centres
 
+Who are your intended audience (supporters/pledges)
+- Anyone with spare money
+  
 How will they use the website?
 User stories
 => Log in as user/supporter
-    - Log in
     - Sign up
+    - Log in
+    - View categories with projects
+    - View projects by organisation
+    - Browse projects
+    - Make pledges to projects
+  
 => Log in as user/organisation
+    - Sign up/create organisation/owner
+    - Admin status for owner of organisation
+    - Approve additional users/members of the organisation
+    - Changes to organisation details only by organisation/owner
+    - Create projects by organisation/owner and organisation/member
 => Homepage
     - See list of available crowdfunding projects
 => "My Profile"
@@ -96,10 +109,11 @@ It can be helpful to keep the markdown preview open in VS Code so that you can s
 | --- | --- | --- | --- | --- | --- |
 | /projects/ | GET | Returns all projects. | N/A | 200 | N/A |
 | /projects/ | POST | Create new project. | Project object | 201 | Must be logged in. |
+| /users/ | GET | Returns all users. | not sure | 200 | Must be superuser. |
 
 ### DB Schema
 ![]( {{ ./relative/path/to/your/schema/image.png }} )
 | URL | HTTP Method | Purpose | Request Body | Success Response Code | Authentication/Authorisation |
-| --- | --- | --- | --- | --- | --- | --- |
+| --- | --- | --- | --- | --- | --- |
 | /projects/ | GET | Returns all projects. | N/A | 200 | N/A |
 | /projects/ | POST | Create new project. | Project object | 201 | Must be logged in. |
