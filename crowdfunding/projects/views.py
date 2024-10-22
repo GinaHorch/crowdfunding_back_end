@@ -65,6 +65,11 @@ class ProjectDetail(APIView):
            serializer.errors,
            status=status.HTTP_400_BAD_REQUEST
        )
+   
+   def delete(self, request, pk):
+      project = self.get_object(pk)
+      project.delete()
+      return Response(status=status.HTTP_204_NO_CONTENT)
 
 class PledgeList(APIView):
    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -121,6 +126,12 @@ class PledgeDetail(APIView):
            serializer.errors,
            status=status.HTTP_400_BAD_REQUEST
        )
+    
+    def delete(self, request, pk):
+       pledge = self.get_object(pk)
+       pledge.delete()
+       return Response(status=status.HTTP_204_NO_CONTENT)
+    
 class CategoryListCreate(APIView):
     def post(self, request):
        serializer = CategorySerializer(data=request.data)
@@ -133,3 +144,9 @@ class CategoryListCreate(APIView):
       categories = Category.objects.all()
       serializer = CategorySerializer(categories, many=True)
       return Response(serializer.data)
+
+def custom_404_view(request, exception=None):
+   return Response({'error':'The resource was not found'}, status=status.HTTP_404_NOT_FOUND)
+
+def custom_500_view(request):
+   return Response({'error': 'An internal server error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
