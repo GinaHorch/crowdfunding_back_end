@@ -25,11 +25,11 @@ Your crowdfunding project must:
   - [x] The supporter/user (i.e. who created the pledge)
   - [x] Whether the pledge is anonymous or not
   - [x] A comment to go along with the pledge
-- [ ] Implement suitable update/delete functionality, e.g. should a project owner be allowed to update a project description?
-- [ ] Implement suitable permissions, e.g. who is allowed to delete a pledge?
-- [ ] Return the relevant status codes for both successful and unsuccessful requests to the API.
-- [ ] Handle failed requests gracefully (e.g. you should have a custom 404 page rather than the default error page).
-- [ ] Use Token Authentication, including an endpoint to obtain a token along with the current user's details.
+- [X] Implement suitable update/delete functionality, e.g. should a project owner be allowed to update a project description?
+- [X] Implement suitable permissions, e.g. who is allowed to delete a pledge?
+- [X] Return the relevant status codes for both successful and unsuccessful requests to the API.
+- [X] Handle failed requests gracefully (e.g. you should have a custom 404 page rather than the default error page).
+- [X] Use Token Authentication, including an endpoint to obtain a token along with the current user's details.
 - [ ] Implement responsive design.
 
 ## Additional Notes
@@ -41,12 +41,12 @@ Note that while this is a crowdfunding website, actual money transactions are ou
 To submit, fill out [this Google form](https://forms.gle/34ymxgPhdT8YXDgF6), including a link to your Github repo. Your lead mentor will respond with any feedback they can offer, and you can approach the mentoring team if you would like help to make improvements based on this feedback!
 
 Please include the following in your readme doc:
-- [ ] A link to the deployed project.
-- [ ] A screenshot of Insomnia, demonstrating a successful GET method for any endpoint.
-- [ ] A screenshot of Insomnia, demonstrating a successful POST method for any endpoint.
-- [ ] A screenshot of Insomnia, demonstrating a token being returned.
-- [ ] Step by step instructions for how to register a new user and create a new project (i.e. endpoints and body data).
-- [ ] Your refined API specification and Database Schema.
+- [X] A link to the deployed project. https://culture4kids-7a814d1e1904.herokuapp.com/users/
+- [X] A screenshot of Insomnia, demonstrating a successful GET method for any endpoint.
+- [X] A screenshot of Insomnia, demonstrating a successful POST method for any endpoint.
+- [X] A screenshot of Insomnia, demonstrating a token being returned.
+- [X] Step by step instructions for how to register a new user and create a new project (i.e. endpoints and body data).
+- [X] Your refined API specification and Database Schema.
 
 # crowdfunding_back_end
 Culture4Kids: Empowering Aboriginal and Torres Strait Islander kids
@@ -63,31 +63,110 @@ Who are your intended audience (creating projects)?
 - Aboriginal and/or Torres Strait Islander language centres
 
 Who are your intended audience (supporters/pledges)
-- Anyone with spare money
+- Anyone with spare money who is an Ally for First Nations children and happy to support their connection to culture.
+
+**User stories:**
+1. User registration
+   As a new user, I want to create an account so that I can log in and participate in projects.
+2. User login
+   As a registered user, I want to login so that I can access my account and depending on my permissions, I can support projects or create projects.
+3. Create an Organisation
+   As a registered user, I can create an organisation that provides services to children in care. I will need an ABN and indicate if my organisations is a registered charity.
+4. Create a Project
+   As a registered user who is the owner of an organisation, I want to create a new crowdfunding project so that I can raise funds for programs that support Aboriginal children in care. 
+5. Pledge to a Project
+   As a supporter, I want to pledge money to a project so that I can help fund a project I believe in.
+6. View all projects
+   As a visitor, I want to see all available projects, so that I can browse and decide which one to support.
+7. View project details
+   As a supporter, I want to view the specific details of a project so that I can understand the project's goals and track its progress.
+8. Update project details
+   As a project owner (organisation) I want to update the details of my project, so that I can keep potential supporters informed of any changes.
+9.  Delete a project
+    As a project owner (organisation) I want to delete my project so that I can remove it if it is no longer needed or relevant.
+10. Anonymous pledging
+    As a supporter, I want to pledge anonymously so that I can support a project without revealing my identity.
+11. View categories
+    As a visitor, I want to browse categories so that I can find projects that align with my interests. 
   
-How will they use the website?
-User stories
-=> Log in as user/supporter
-    - Sign up
-    - Log in
-    - View categories with projects
-    - View projects by organisation
-    - Browse projects
-    - Make pledges to projects
-  
-=> Log in as user/organisation
-    - Sign up/create organisation/owner
-    - Admin status for owner of organisation
-    - Approve additional users/members of the organisation
-    - Changes to organisation details only by organisation/owner
-    - Create projects by organisation/owner and organisation/member
-=> Homepage
-    - See list of available crowdfunding projects
-=> "My Profile"
-    - See details of currently-logged-in user account
-    - change details of user account
-    - delete user account (?)
-=> "My Campaigns"
+### Step-by-Step instructions for how to register a new user and create a new project:
+**Register a New User**
+1. **Endpoint:** POST /users/
+2. **Description:** This endpoint allows users to register an account.
+3. **Body Data** (in JSON):
+   `{
+  "username": "example_user",
+  "email": "example@example.com",
+  "password": "securepassword123"
+   }`
+4. **Response:** Upon successful registration, you will receive a response with the created user details, excluding the password, and status code `201 Created`. It looks like:
+   `{
+  "id": 1,
+  "username": "example_user",
+  "email": "example@example.com"
+   }`
+
+**Log in to generate user token**
+1. **Endpoint:** POST /api-token-auth/users/
+2. **Description:** This endpoint generates a token for the user to authenticate further requests.
+3. **Body data** (in JSON):
+   `{
+  "username": "example_user",
+  "password": "securepassword123"
+   }`
+4. **Response:** You'll receive a token like this:
+   `{
+  "token": "your-authentication-token"
+    }`
+
+**Create an Organisation(only once logged in)**
+
+5. **Enpoint:** POST /organisations/
+6. **Description:** This endpoint creates a new organisation that a user can manage. Only logged-in users can create an organisation.
+7. **Authorisation:** Token <your-token-here>
+8. **Body Data** (in JSON):
+   `{
+  "organisation_name": "Awesome Organisation",
+  "contact_name": "John Doe",
+  "phone_number": "123456789",
+  "email": "contact@awesome.org",
+  "abn": "1234567890",
+  "charity_status": true,
+  "image_url": "https://example.com/logo.png"
+    }`
+9.  **Response:** On success, returns organisation details with status code `201 Created`.
+
+**Generate user token for organisation**
+
+10. **Endpoint:** POST /api-token-auth/organisations/
+11. **Description:** This endpoint generates a token for the owner of an organisation to authenticate further requests.
+12. **Body data** (in JSON):
+   `{
+  "username": "example_user",
+  "password": "securepassword123"
+   }`
+13. **Response:** You'll receive a token like this:
+   `{
+  "token": "your-authentication-token"
+    }`
+
+**Create a New Project (Only as organisation)**
+1. **Endpoint:** POST /projects/
+2. **Description:** After creating an organisation you can create projects as an organisation.
+3. **Authorisation:** Token <your-organisation-token-here>
+4. **Body Data** (in JSON):
+   `{
+   "title": "New Project",
+   "description": "This is an exciting new project!",
+   "target_amount": 5000,
+   "current_amount": 0,
+   "image_url": "https://example.com/project.png",
+   "location": "Sydney",
+   "end_date": "2024-12-31T23:59:59Z",
+   "category": 1,
+   "organisation": 1
+   }`
+5. **Response:** On success, returns the project details with status code `201 Created`.
 
 ### Front End Pages/Functionality
 - {{ A page on the front end }}
@@ -99,21 +178,104 @@ User stories
     - {{ etc }}
 
 ### API Spec
-{{ Fill out the table below to define your endpoints. An example of what this might look like is shown at the bottom of the page. 
-
-It might look messy here in the PDF, but once it's rendered it looks very neat! 
-
-It can be helpful to keep the markdown preview open in VS Code so that you can see what you're typing more easily. }}
 
 | URL | HTTP Method | Purpose | Request Body | Success Response Code | Authentication/Authorisation |
 | --- | --- | --- | --- | --- | --- |
 | /projects/ | GET | Returns all projects. | N/A | 200 | N/A |
-| /projects/ | POST | Create new project. | Project object | 201 | Must be logged in. |
-| /users/ | GET | Returns all users. | not sure | 200 | Must be superuser. |
+| /projects/ | POST | Create new project. | Project object | 201 | Must be logged in as organisation. |
+| /projects/{id}/ | GET | Retrieve project details by ID | N/A | 200 | Must be logged in. |
+| /projects/{id}/ | PUT | Update an existing project. | Project object | 201 | Must be logged in as project owner. |
+| /projects/{id}/ | DELETE | Delete a project. | Project object | 201 | Must be logged in as project owner. |
+| /users/ | GET | Returns all users. | N/A | 200 | Must be superuser. |
+| /users/ | POST | Register a new user. | user object |201 | N/A |
+| /api-token-auth/users/ | POST | Generate a user token for authentication | user object | 200 | Must be logged in. |
+| /organisations/ | GET | Returns all organisations. | N/A | 200 | N/A |
+| /organisations/ | POST | Create a new organisation. | organisation object |201 | Must be logged in. |
+| /api-token-auth/organisations/ | POST | Generate a user token for authentication | organisation object | 200 | Must be logged in. |
 
 ### DB Schema
-![]( {{ ./relative/path/to/your/schema/image.png }} )
-| URL | HTTP Method | Purpose | Request Body | Success Response Code | Authentication/Authorisation |
-| --- | --- | --- | --- | --- | --- |
-| /projects/ | GET | Returns all projects. | N/A | 200 | N/A |
-| /projects/ | POST | Create new project. | Project object | 201 | Must be logged in. |
+[Link to ERD](/Users/ginahorch/SheCodes/crowdfunding_back_end/ERD.drawio)
+
+### **Users Table**
+| Field Name   | Data Type   | Constraints         | Description              |
+|--------------|-------------|---------------------|--------------------------|
+| `id`         | `AutoField` | Primary Key          | Unique ID for each user  |
+| `username`   | `CharField` | Unique, MaxLength=150| Username of the user     |
+| `email`      | `EmailField`| Unique               | User's email address     |
+| `password`   | `CharField` | MaxLength=128        | Hashed password          |
+| `is_active`  | `BooleanField`| Default=True        | If the account is active |
+| `date_joined`| `DateTimeField`| AutoNowAdd=True    | Date user registered     |
+
+---
+
+### **Organisations Table**
+| Field Name      | Data Type   | Constraints         | Description                |
+|-----------------|-------------|---------------------|----------------------------|
+| `id`            | `AutoField` | Primary Key          | Unique ID for each organisation |
+| `name`          | `CharField` | MaxLength=255        | Name of the organisation    |
+| `owner`         | `ForeignKey`| User, on_delete=CASCADE | Owner of the organisation |
+| `contact_email` | `EmailField`|                      | Organisation’s contact email|
+| `phone`         | `CharField` | MaxLength=15         | Contact phone number        |
+| `abn`           | `CharField` | Unique, MaxLength=11 | Australian Business Number  |
+| `is_charity`    | `BooleanField`| Default=False      | Whether it's a charity      |
+
+---
+
+### **Projects Table**
+| Field Name       | Data Type     | Constraints                | Description                    |
+|------------------|---------------|----------------------------|---------------------------------|
+| `id`             | `AutoField`   | Primary Key                | Unique ID for each project      |
+| `title`          | `CharField`   | MaxLength=255              | Title of the project            |
+| `description`    | `TextField`   |                            | Description of the project      |
+| `target_amount`  | `DecimalField`| MaxDigits=10, DecimalPlaces=2 | Target amount to fundraise  |
+| `current_amount` | `DecimalField`| MaxDigits=10, DecimalPlaces=2 | Current amount raised        |
+| `owner`          | `ForeignKey`  | Organisation, on_delete=CASCADE | Organisation creating the project |
+| `is_open`        | `BooleanField`| Default=True               | If the project is open for pledges|
+| `date_created`   | `DateTimeField`| AutoNowAdd=True            | Date project was created       |
+| `end_date`       | `DateTimeField`|                            | End date for the project        |
+| `image_url`      | `URLField`    |                            | URL of the project image        |
+| `category`       | `ForeignKey`  | Category, on_delete=SET_NULL, null=True | Project category |
+
+---
+
+### **Pledges Table**
+| Field Name   | Data Type     | Constraints           | Description                   |
+|--------------|---------------|-----------------------|-------------------------------|
+| `id`         | `AutoField`   | Primary Key            | Unique ID for each pledge      |
+| `supporter`  | `ForeignKey`  | User, on_delete=CASCADE | User who made the pledge       |
+| `project`    | `ForeignKey`  | Project, on_delete=CASCADE | Project this pledge is for   |
+| `amount`     | `DecimalField`| MaxDigits=10, DecimalPlaces=2 | Amount pledged               |
+| `comment`    | `TextField`   |                       | Supporter's comment           |
+| `anonymous`  | `BooleanField`| Default=False          | If the pledge is anonymous     |
+| `pledge_date`| `DateTimeField`| AutoNowAdd=True        | Date pledge was made           |
+
+---
+
+### **Categories Table**
+| Field Name   | Data Type     | Constraints           | Description                   |
+|--------------|---------------|-----------------------|-------------------------------|
+| `id`         | `AutoField`   | Primary Key            | Unique ID for each category    |
+| `name`       | `CharField`   | MaxLength=100          | Name of the category           |
+
+---
+
+### **Token Table (from Django Rest Framework)**
+| Field Name   | Data Type     | Constraints           | Description                   |
+|--------------|---------------|-----------------------|-------------------------------|
+| `key`        | `CharField`   | MaxLength=40, Primary Key | The authentication token     |
+| `user`       | `ForeignKey`  | User, on_delete=CASCADE | User that owns the token      |
+| `created`    | `DateTimeField`| AutoNowAdd=True        | Date token was created         |
+
+---
+
+### A screenshot of Insomnia, demonstrating a successful GET method for any endpoint.
+
+![GetAllUsers](ScreenShotGET-AllUsers.png "Screenshot of getting all users")
+
+### A screenshot of Insomnia, demonstrating a successful POST method for any endpoint.
+
+![CreatePledge](ScreenShotPOST-CreatePledge.png "Screenshot of making a pledge")
+
+### A screenshot of Insomnia, demonstrating a token being returned.
+
+![GenerateOrganisationToken](ScreenShotPOST-GenerateOrganisationToken.png "Screenshot of generating a token for an organisation")
