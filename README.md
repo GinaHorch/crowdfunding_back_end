@@ -194,7 +194,7 @@ Who are your intended audience (supporters/pledges)
 | /api-token-auth/organisations/ | POST | Generate a user token for authentication | organisation object | 200 | Must be logged in. |
 
 ### DB Schema
-[Link to ERD](/Users/ginahorch/SheCodes/crowdfunding_back_end/ERD.drawio)
+[Link to ERD](https://github.com/GinaHorch/crowdfunding_back_end/blob/3862dd649246290cf38d8832968705ca631ea891/ERD.drawio)
 
 ### **Users Table**
 | Field Name   | Data Type   | Constraints         | Description              |
