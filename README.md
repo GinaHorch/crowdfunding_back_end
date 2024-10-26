@@ -195,6 +195,10 @@ Who are your intended audience (supporters/pledges)
 
 ### DB Schema
 [Link to ERD](https://github.com/GinaHorch/crowdfunding_back_end/blob/3862dd649246290cf38d8832968705ca631ea891/ERD.drawio)
+### A screenshot of the ERD
+
+![ERD](ScreenShot-ERD.png "Screenshot of making a pledge")
+
 
 ### **Users Table**
 | Field Name   | Data Type   | Constraints         | Description              |
