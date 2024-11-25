@@ -21,8 +21,12 @@ from organisations.views import CustomAuthToken as OrgAuthToken
 from django.conf import settings
 from django.conf.urls.static import static
 from projects.views import CategoryListCreate
+from django.http import JsonResponse
+from django.urls import path, include
+
 
 urlpatterns = [
+    path('', lambda request: JsonResponse({"message": "Welcome to the API!"})),
     path('admin/', admin.site.urls),
     path('projects/', include('projects.urls')),
     path('users/', include('users.urls')),
