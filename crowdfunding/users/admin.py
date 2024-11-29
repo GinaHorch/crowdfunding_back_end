@@ -7,7 +7,7 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = UserAdmin.fieldsets + (
         (None, {'fields': ('role', 'pledge_id', 'organisation_name', 'contact_person', 'phone_number', 'image_url', 'project')}),
     )
-    list_display = ['username', 'email', 'role', 'date_created']
-    list_filter = ['role']
+    list_display = ['username', 'email', 'role', 'date_created', 'is_active']
+    list_filter = ['role', 'is_active']
 
 admin.site.register(CustomUser, CustomUserAdmin)
