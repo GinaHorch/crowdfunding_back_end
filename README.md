@@ -71,7 +71,7 @@ Who are your intended audience (supporters/pledges)
 2. User login
    As a registered user, I want to login so that I can access my account and depending on my permissions, I can support projects or create projects.
 3. Create an Organisation
-   As a registered user, I can create an organisation that provides services to children in care. I will need an ABN and indicate if my organisations is a registered charity.
+   As a registered user, I can create an organisation that provides services to children in care. I will need an ABN and indicate if my organisation is a registered charity.
 4. Create a Project
    As a registered user who is the owner of an organisation, I want to create a new crowdfunding project so that I can raise funds for programs that support Aboriginal children in care. 
 5. Pledge to a Project
@@ -81,9 +81,9 @@ Who are your intended audience (supporters/pledges)
 7. View project details
    As a supporter, I want to view the specific details of a project so that I can understand the project's goals and track its progress.
 8. Update project details
-   As a project owner (organisation) I want to update the details of my project, so that I can keep potential supporters informed of any changes.
-9.  Delete a project
-    As a project owner (organisation) I want to delete my project so that I can remove it if it is no longer needed or relevant.
+   As an organisation I want to update the details of my project, so that I can keep potential supporters informed of any changes.
+9. Delete a project
+   As an organisation I want to delete my project so that I can remove it if it is no longer needed or relevant.
 10. Anonymous pledging
     As a supporter, I want to pledge anonymously so that I can support a project without revealing my identity.
 11. View categories
@@ -217,7 +217,6 @@ Who are your intended audience (supporters/pledges)
 |-----------------|-------------|---------------------|----------------------------|
 | `id`            | `AutoField` | Primary Key          | Unique ID for each organisation |
 | `name`          | `CharField` | MaxLength=255        | Name of the organisation    |
-| `owner`         | `ForeignKey`| User, on_delete=CASCADE | Owner of the organisation |
 | `contact_email` | `EmailField`|                      | Organisation’s contact email|
 | `phone`         | `CharField` | MaxLength=15         | Contact phone number        |
 | `abn`           | `CharField` | Unique, MaxLength=11 | Australian Business Number  |

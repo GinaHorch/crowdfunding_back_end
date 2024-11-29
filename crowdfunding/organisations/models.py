@@ -15,13 +15,11 @@ class OrganisationProfile(models.Model):
     organisation_name = models.CharField(max_length=255)
     organisation_contact = models.CharField(max_length=255)
     organisation_phone_number = models.CharField(max_length=15)
-    organisation_email = models.EmailField(unique=True)
-    organisation_image_url = models.URLField(null=True, blank=True)
     organisation_ABN = models.CharField(max_length=11, unique=True)
     is_charity = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.organisation_name
+        return f"{self.organisation_name} ({self.organisation_ABN})"
     
     def clean(self):
         if not self.organisation_ABN.isdigit() or len(self.organisation_ABN) != 11:

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from organisations.models import OrganisationProfile
+from django.core.exceptions import ValidationError
 
 class Category(models.Model):
    name = models.CharField(max_length=100)
@@ -33,6 +34,14 @@ class Project(models.Model):
 
    def __str__(self):
       return self.title
+   
+   def clean(self):
+      if self.target_amount < 0:
+         raise ValidationError("Target amount cannot be negative.")
+      if self.current_amount < 0:
+         raise ValidationError("Current amount cannot be negative.")
+      if self.current_amount > self.target_amount:
+         raise ValidationError("Current amount cannot exceed target amount.")
     
 class Pledge(models.Model):
    amount = models.IntegerField()
@@ -52,3 +61,9 @@ class Pledge(models.Model):
 
    def __str__(self):
       return f"{self.supporter.username} - {self.amount} for {self.project.title}"
+   
+   def clean(self):
+      if not self.project:
+          raise ValidationError("Pledge must be associated with a project.")
+      if self.amount > (self.project.target_amount - self.project.current_amount):
+        raise ValidationError("Pledge exceeds the funding target.")

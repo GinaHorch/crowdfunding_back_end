@@ -3,3 +3,7 @@ from .models import OrganisationProfile
 
 # Register your models here.
 admin.site.register(OrganisationProfile)
+
+@admin.register(OrganisationProfile)
+class OrganisationProfileAdmin(admin.ModelAdmin):
+    list_display = ['id', 'organisation_name', 'organisation_contact', 'organisation_ABN', 'is_charity']

@@ -163,3 +163,4 @@ cython_debug/
 
 # Txt docs
 working_notes.txt
+staticfiles/

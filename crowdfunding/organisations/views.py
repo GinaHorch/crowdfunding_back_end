@@ -27,8 +27,12 @@ class OrganisationProfileList(APIView):
                 serializer.data,
                 status=status.HTTP_201_CREATED
             )
+        custom_errors = {}
+        for field, errors in serializer.errors.items():
+            custom_errors[field] = " ".join(errors) # combine multiple errors
+        
         return Response(
-            serializer.errors,
+            {"detail": "Validation failed", "errors": custom_errors},
             status=status.HTTP_400_BAD_REQUEST
         )
 

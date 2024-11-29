@@ -16,9 +16,10 @@ class ProjectAdmin(admin.ModelAdmin):
     inlines = [PledgeInline]
 
     def get_organisation_name(self, obj):
-        return obj.organisation.organisation_name
-    get_organisation_name.admin_order_field = 'organisation__organisation_name'
-    get_organisation_name.short_description = 'Organisation Name'
+        return getattr(obj.organisation, 'organisation_name', 'No Organisation')
+    #     return obj.organisation.organisation_name
+    # get_organisation_name.admin_order_field = 'organisation__organisation_name'
+    # get_organisation_name.short_description = 'Organisation Name'
 
 @admin.register(Pledge)
 class PledgeAdmin(admin.ModelAdmin):

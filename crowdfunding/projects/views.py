@@ -1,37 +1,30 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from rest_framework.views import APIView # Required for class-based views like APIView
+from rest_framework.response import Response # Required for sending responses
 from rest_framework import status, permissions
-from rest_framework import generics
+from rest_framework.generics import ListAPIView # Used for paginated ListAPIView
+from rest_framework.pagination import PageNumberPagination
 from django.http import Http404
 from .models import Project, Pledge, Category
-from organisations.models import OrganisationProfile
-from organisations.serializers import OrganisationSerializer
+# from organisations.models import OrganisationProfile 
+# from organisations.serializers import OrganisationSerializer
 from .serializers import ProjectSerializer, PledgeSerializer, CategorySerializer, ProjectDetailSerializer, PledgeDetailSerializer
 from .permissions import IsOwnerOrReadOnly, IsSupporterOrReadOnly
-class ProjectList(APIView):
-  permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-  def get(self, request):
-      projects = Project.objects.all()
-      serializer = ProjectSerializer(projects, many=True)
-      return Response(serializer.data)
-  
+class ProjectPagination(PageNumberPagination):
+   page_size = 10
+class ProjectList(ListAPIView):
+  queryset = Project.objects.all()
+  serializer_class = ProjectSerializer
+  permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+  pagination_class = ProjectPagination
+
   def post(self, request):
-      if request.user.is_authenticated:
-        serializer = ProjectSerializer(data=request.data)
-        if serializer.is_valid():
-          serializer.save(owner=request.user)
-          return Response(
-              serializer.data,
-              status=status.HTTP_201_CREATED
-          )
-      return Response(
-          serializer.errors,
-          status=status.HTTP_400_BAD_REQUEST
-          )
+    serializer = ProjectSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=request.user)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
   
 class ProjectDetail(APIView):
-   
    permission_classes = [
        permissions.IsAuthenticatedOrReadOnly,
        IsOwnerOrReadOnly
@@ -43,7 +36,7 @@ class ProjectDetail(APIView):
            self.check_object_permissions(self.request, project)
            return project
        except Project.DoesNotExist:
-           raise Http404
+           raise Http404({"detail": "Project not found."})
 
    def get(self, request, pk):
        project = self.get_object(pk)
@@ -80,18 +73,20 @@ class PledgeList(APIView):
       return Response(serializer.data)
 
    def post(self, request):
-      if request.user.is_authenticated:
-        serializer = PledgeSerializer(data=request.data)
-        if serializer.is_valid():
-          serializer.save(supporter=request.user)
-          return Response(
-              serializer.data,
-              status=status.HTTP_201_CREATED
-          )
-      return Response(
-          serializer.errors,
-          status=status.HTTP_400_BAD_REQUEST
-          )
+      serializer = PledgeSerializer(data=request.data)
+      serializer.is_valid(raise_exception=True)
+
+    # Check if the project is open for pledges
+      project = serializer.validated_data.get('project')
+      if not project.is_open:
+        return Response(
+            {"detail": "You cannot pledge to a closed project."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+      
+      serializer.save(supporter=request.user)
+      return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 class PledgeDetail(APIView):
     permission_classes = [
        permissions.IsAuthenticatedOrReadOnly,
@@ -104,7 +99,7 @@ class PledgeDetail(APIView):
            self.check_object_permissions(self.request, pledge)
            return pledge
        except Pledge.DoesNotExist:
-           raise Http404
+           raise Http404({"detail": "Pledge not found."})
 
     def get(self, request, pk):
        pledge = self.get_object(pk)
@@ -118,27 +113,29 @@ class PledgeDetail(APIView):
            data=request.data,
            partial=True
        )
-       if serializer.is_valid():
-           serializer.save()
-           return Response(serializer.data)
-
-       return Response(
-           serializer.errors,
-           status=status.HTTP_400_BAD_REQUEST
-       )
+       serializer.is_valid(raise_exception=True)
+       serializer.save()
+       return Response(serializer.data)
     
     def delete(self, request, pk):
        pledge = self.get_object(pk)
        pledge.delete()
        return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
 class CategoryListCreate(APIView):
     def post(self, request):
        serializer = CategorySerializer(data=request.data)
-       if serializer.is_valid():
-          serializer.save()
-          return Response(serializer.data, status=status.HTTP_201_CREATED)
-       return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+       serializer.is_valid(raise_exception=True)
+
+    # Check for duplicates
+       if Category.objects.filter(name=serializer.validated_data['name']).exists():
+          return Response(
+             {"detail": "A category with this name already exists."},
+             status=status.HTTP_400_BAD_REQUEST
+          )
+
+       serializer.save()
+       return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     def get(self, request):
       categories = Category.objects.all()
