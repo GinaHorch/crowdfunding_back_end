@@ -30,8 +30,6 @@ urlpatterns = [
     path('projects/', include('projects.urls')),
     path('users/', include('users.urls')),
     path('api-token-auth/', UserAuthToken.as_view(), name='token-auth'),
-    # path('api-token-auth/users/', UserAuthToken.as_view(), name='api_token_auth_users'),
-    # path('api-token-auth/organisations/', OrgAuthToken.as_view(), name='api_token_auth_organisations'),
     path('organisations/', include('organisations.urls')),
     path('categories/', CategoryListCreate.as_view(), name='category-list-create'),
 ]
