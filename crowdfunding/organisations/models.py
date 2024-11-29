@@ -3,7 +3,6 @@ from users.models import CustomUser
 from django.conf import settings
 from django.core.exceptions import ValidationError
 
-# Create your models here.
 class OrganisationProfile(models.Model):
     # One-to-one relationship with CustomUser
     user = models.OneToOneField(
@@ -21,20 +20,9 @@ class OrganisationProfile(models.Model):
     organisation_ABN = models.CharField(max_length=11, unique=True)
     is_charity = models.BooleanField(default=False)
 
-    # Owners and Staff
-    owners = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
-        related_name='owned_organisations'
-    )
-
-    staff = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
-        related_name='staff_organisations'
-    )
-
     def __str__(self):
         return self.organisation_name
     
     def clean(self):
-        if len(self.organisation_ABN) != 11:
-            raise ValidationError("ABN must be exactly 11 digits")
+        if not self.organisation_ABN.isdigit() or len(self.organisation_ABN) != 11:
+            raise ValidationError("ABN must be exactly 11 numeric digits")

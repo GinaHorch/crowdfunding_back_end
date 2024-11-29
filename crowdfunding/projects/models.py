@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from organisations.models import OrganisationProfile
 
-# Create your models here.
 class Category(models.Model):
    name = models.CharField(max_length=100)
    
@@ -20,11 +19,6 @@ class Project(models.Model):
    date_created = models.DateTimeField(auto_now_add=True)
    end_date = models.DateTimeField(null=True)
    
-   owner = models.ForeignKey(
-       get_user_model(),
-       on_delete=models.CASCADE,
-       related_name='projects'
-   )
    category = models.ForeignKey(
       Category,
       on_delete=models.SET_NULL,

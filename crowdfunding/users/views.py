@@ -2,15 +2,13 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework import permissions
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny
 from .models import CustomUser
-from organisations.models import OrganisationProfile
 from .serializers import CustomUserSerializer
-from organisations.serializers import OrganisationProfileSerializer
 from projects.models import Project
+from .token_serializers import TokenSerializer
 
 class CustomUserList(APIView):
   permission_classes = [permissions.AllowAny]
@@ -53,9 +51,9 @@ class CustomUserDetail(APIView):
            return Response(serializer.data)
        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
    
-   def patch(self, requst, pk):
+   def patch(self, request, pk):
        user = self.get_object(pk)
-       serializer = CustomUserSerializer(user, data=request.data, parial=True)
+       serializer = CustomUserSerializer(user, data=request.data, partial=True)
        if serializer.is_valid():
            serializer.save()
            return Response(serializer.data)
@@ -66,18 +64,33 @@ class CustomUserDetail(APIView):
        user.delete()
        return Response(status=status.HTTP_204_NO_CONTENT)
 
-class CustomAuthToken(ObtainAuthToken):
-  def post(self, request, *args, **kwargs):
-      serializer = self.serializer_class(
-          data=request.data,
-          context={'request': request}
-      )
-      serializer.is_valid(raise_exception=True)
-      user = serializer.validated_data['user']
-      token, created = Token.objects.get_or_create(user=user)
+# New Unified Token Authentication View
+class TokenAuthView(APIView):
+    permission_classes = [AllowAny]  # Allow anyone to access the token endpoint
 
-      return Response({
-          'token': token.key,
-          'user_id': user.id,
-          'email': user.email
-      })
+    def post(self, request, *args, **kwargs):
+        # Use the unified TokenSerializer
+        serializer = TokenSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.context['user']
+            role = serializer.context['role']
+            token, created = Token.objects.get_or_create(user=user)
+
+            # Generate or retrieve the token for the authenticated user
+            
+            response_data = {
+                "token": token.key,
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                    "role": role
+                }
+            }
+            if role == "organisation":
+                organisation = getattr(user, 'organisation_profile', None)
+                if organisation:
+                    response_data["user"]["organisation_name"] = organisation.organisation_name
+
+            return Response(response_data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

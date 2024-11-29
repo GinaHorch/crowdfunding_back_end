@@ -1,9 +1,9 @@
 from django.urls import path
 from . import views
-from .views import CustomAuthToken
+from .views import TokenAuthView, CustomUserList, CustomUserDetail
 
 urlpatterns = [
-    path('', views.CustomUserList.as_view(), name='user-list'),
-    path('<int:pk>/', views.CustomUserDetail.as_view(), name='user-detail'),
-    path('api-token-auth/', CustomAuthToken.as_view(), name='api_toke_auth_users')
+    path('', views.CustomUserList.as_view(), name='user-list'), # List and create users
+    path('<int:pk>/', views.CustomUserDetail.as_view(), name='user-detail'), # Get, update, delete a user
+    path('api/token-auth/', TokenAuthView.as_view(), name='token-auth') # Unified token authentication
 ]

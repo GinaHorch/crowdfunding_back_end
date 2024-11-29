@@ -16,8 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from users.views import CustomAuthToken as UserAuthToken
-from organisations.views import CustomAuthToken as OrgAuthToken
+from users.views import TokenAuthView as UserAuthToken
 from django.conf import settings
 from django.conf.urls.static import static
 from projects.views import CategoryListCreate
@@ -30,9 +29,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('projects/', include('projects.urls')),
     path('users/', include('users.urls')),
-    path('api-token-auth/', UserAuthToken.as_view(), name='api_token_auth'),
+    path('api-token-auth/', UserAuthToken.as_view(), name='token-auth'),
     # path('api-token-auth/users/', UserAuthToken.as_view(), name='api_token_auth_users'),
-    path('api-token-auth/organisations/', OrgAuthToken.as_view(), name='api_token_auth_organisations'),
+    # path('api-token-auth/organisations/', OrgAuthToken.as_view(), name='api_token_auth_organisations'),
     path('organisations/', include('organisations.urls')),
     path('categories/', CategoryListCreate.as_view(), name='category-list-create'),
 ]
