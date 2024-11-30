@@ -14,6 +14,12 @@ class ProjectSerializer(serializers.ModelSerializer):
       model = Project
       fields = ['id', 'title', 'description', 'target_amount', 'current_amount', 'owner', 'date_created', 'is_open', 'end_date', 'category', 'organisation']
 
+    def create(self, validated_data):
+       user = self.context['request'].user
+       validated_data['owner'] = user
+       validated_data['organisation'] = user.organisationprofile
+       return super().create(validated_data)
+    
 class CategorySerializer(serializers.ModelSerializer):
    class Meta:
       model = Category

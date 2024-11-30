@@ -8,7 +8,7 @@ from .models import Project, Pledge, Category
 # from organisations.models import OrganisationProfile 
 # from organisations.serializers import OrganisationSerializer
 from .serializers import ProjectSerializer, PledgeSerializer, CategorySerializer, ProjectDetailSerializer, PledgeDetailSerializer
-from .permissions import IsOwnerOrReadOnly, IsSupporterOrReadOnly
+from .permissions import IsOwnerOrReadOnly, IsSupporterOrReadOnly, IsOrganisationOrReadOnly
 
 class ProjectPagination(PageNumberPagination):
    page_size = 10
@@ -27,7 +27,7 @@ class ProjectList(ListAPIView):
 class ProjectDetail(APIView):
    permission_classes = [
        permissions.IsAuthenticatedOrReadOnly,
-       IsOwnerOrReadOnly
+       IsOwnerOrReadOnly, IsOrganisationOrReadOnly,
    ]
 
    def get_object(self, pk):
