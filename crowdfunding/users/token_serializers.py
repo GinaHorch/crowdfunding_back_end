@@ -15,6 +15,7 @@ class TokenSerializer(serializers.Serializer):
         # Authenticate the user
         user = authenticate(username=username, password=password)
         if not user:
+            print(f"Authentication failed for username: {username}")
             raise AuthenticationFailed("Invalid username or password.")
         if not user.is_active:
             raise AuthenticationFailed("This account is inactive.")
@@ -24,7 +25,7 @@ class TokenSerializer(serializers.Serializer):
             role = 'user'
 
         # Add role to the serializer context
-        self.context['role'] = role
+        self.context['role'] = user.role
         self.context['user'] = user
         return data
     
