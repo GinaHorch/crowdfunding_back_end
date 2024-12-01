@@ -32,6 +32,8 @@ class CustomUserList(APIView):
               serializer.data,
               status=status.HTTP_201_CREATED
           )
+       
+      print("Serializer Errors:", serializer.errors)
       custom_errors = {
             field: " ".join(errors) for field, errors in serializer.errors.items()
         }
