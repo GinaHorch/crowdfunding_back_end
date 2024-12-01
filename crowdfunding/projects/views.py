@@ -17,7 +17,19 @@ class ProjectList(ListAPIView):
   pagination_class = ProjectPagination
 
   def post(self, request):
-    serializer = ProjectSerializer(data=request.data)
+    # check if the user is an organisation
+    if not request.user.is_organisation():
+       return Response(
+          {"detail": "Only organisations can create projects."},
+                status=status.HTTP_403_FORBIDDEN,
+       )
+    
+    # Add organisation to the request data
+    data = request.data.copy()
+    data["organisation"] = request.user.id
+
+    # Validate and save the project
+    serializer = ProjectSerializer(data=data)
     serializer.is_valid(raise_exception=True)
     serializer.save(owner=request.user)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
