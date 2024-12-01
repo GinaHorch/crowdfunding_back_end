@@ -27,9 +27,37 @@ class CustomUserSerializer(serializers.ModelSerializer):
             }
         return None
     
+    def validate(self, data):
+        """Validate payload based on role."""
+        role = data.get('role', CustomUser.ROLE_USER)
+        if role == CustomUser.ROLE_ORGANISATION:
+            # Validate that organisation-specific fields are present
+            required_fields = ['organisation_name', 'organisation_contact', 'organisation_phone_number', 'organisation_ABN']
+            for field in required_fields:
+                if not data.get(field):
+                    raise serializers.ValidationError({field: f"{field} is required for organisation users."})
+
+            # Validate organisation_ABN
+            organisation_ABN = data.get('organisation_ABN')
+            if organisation_ABN and (not organisation_ABN.isdigit() or len(organisation_ABN) != 11):
+                raise serializers.ValidationError({"organisation_ABN": "ABN must be exactly 11 numeric digits."})
+
+        elif role == CustomUser.ROLE_USER:
+            # Ensure organisation-specific fields are not included
+            organisation_fields = ['organisation_name', 'organisation_contact', 'organisation_phone_number', 'organisation_ABN']
+            for field in organisation_fields:
+                if data.get(field):
+                    raise serializers.ValidationError({field: f"{field} must not be provided for users with the role 'user'."})
+        return data
+
     def create(self, validated_data):
-         # Use create_user to handle hashed password creation
-        return CustomUser.objects.create_user(**validated_data)
+        """Create user with hashed password."""
+        password = validated_data.pop('password', None)
+        user = CustomUser(**validated_data)
+        if password:
+            user.set_password(password)
+        user.save()
+        return user
     
 # Serializer for Projects
 class ProjectSerializer(serializers.ModelSerializer):

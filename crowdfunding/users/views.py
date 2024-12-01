@@ -16,7 +16,7 @@ class UserPagination(PageNumberPagination):
 
 # List All Users
 class CustomUserList(APIView):
-  permission_classes = [AllowAny]
+  permission_classes = [permissions.AllowAny]
 
   def get(self, request):
       users = CustomUser.objects.all()
