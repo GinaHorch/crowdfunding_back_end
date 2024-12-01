@@ -11,7 +11,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = [
             'id', 'username', 'email', 'date_joined', 'role',
-            'organisation_details', 'date_created', 'image_url'
+            'organisation_name', 'organisation_contact', 'organisation_phone_number', 
+            'organisation_ABN', 'is_charity', 'date_created', 'image_url',
         ]
         extra_kwargs = {'password': {'write_only': True}}
 
@@ -29,6 +30,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     
     def validate(self, data):
         """Validate payload based on role."""
+        print("Incoming data:", data)  # Debugging line
 
         role = data.get('role', CustomUser.ROLE_USER)
 
@@ -62,7 +64,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
                 'organisation_ABN',
             ]
             for field in organisation_fields:
-                if field in data:
+                if data.get(field):
                     raise serializers.ValidationError({
                         field: f"{field} must not be provided for users with the role 'user'."
                     })

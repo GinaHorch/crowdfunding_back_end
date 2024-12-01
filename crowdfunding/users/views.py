@@ -25,6 +25,7 @@ class CustomUserList(APIView):
       return Response(serializer.data)
 
   def post(self, request):
+      print("Raw request data:", request.data)  # Log raw incoming data
       serializer = CustomUserSerializer(data=request.data)
       if serializer.is_valid():
           serializer.save()
