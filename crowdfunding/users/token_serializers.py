@@ -12,6 +12,7 @@ class TokenSerializer(serializers.Serializer):
         username = data.get('username')
         password = data.get('password')
 
+        print(f"Attempting to authenticate username: {username}")
         # Authenticate the user
         user = authenticate(username=username, password=password)
         if not user:
