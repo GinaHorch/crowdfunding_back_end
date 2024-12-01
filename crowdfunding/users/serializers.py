@@ -30,27 +30,43 @@ class CustomUserSerializer(serializers.ModelSerializer):
     def validate(self, data):
         """Validate payload based on role."""
 
-        print("incoming data:", data)
-        
         role = data.get('role', CustomUser.ROLE_USER)
+
         if role == CustomUser.ROLE_ORGANISATION:
             # Validate that organisation-specific fields are present
-            required_fields = ['organisation_name', 'organisation_contact', 'organisation_phone_number', 'organisation_ABN']
+            required_fields = [
+                    'organisation_name', 
+                    'organisation_contact', 
+                    'organisation_phone_number', 
+                    'organisation_ABN',
+            ]
             for field in required_fields:
                 if not data.get(field):
-                    raise serializers.ValidationError({field: f"{field} is required for organisation users."})
+                    raise serializers.ValidationError({
+                        field: f"{field} is required for organisation users."
+                    })
 
             # Validate organisation_ABN
             organisation_ABN = data.get('organisation_ABN')
             if organisation_ABN and (not organisation_ABN.isdigit() or len(organisation_ABN) != 11):
-                raise serializers.ValidationError({"organisation_ABN": "ABN must be exactly 11 numeric digits."})
+                raise serializers.ValidationError({
+                    "organisation_ABN": "ABN must be exactly 11 numeric digits."
+                })
 
         elif role == CustomUser.ROLE_USER:
             # Ensure organisation-specific fields are not included
-            organisation_fields = ['organisation_name', 'organisation_contact', 'organisation_phone_number', 'organisation_ABN']
+            organisation_fields = [
+                'organisation_name', 
+                'organisation_contact', 
+                'organisation_phone_number', 
+                'organisation_ABN',
+            ]
             for field in organisation_fields:
-                if data.get(field):
-                    raise serializers.ValidationError({field: f"{field} must not be provided for users with the role 'user'."})
+                if field in data:
+                    raise serializers.ValidationError({
+                        field: f"{field} must not be provided for users with the role 'user'."
+                    })
+                
         return data
 
     def create(self, validated_data):
