@@ -53,9 +53,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_extensions',
 ]
 
+# Include django-extensions only in development
+if DEBUG:  # DEBUG should be True in local settings
+    INSTALLED_APPS += ['django_extensions']
+    
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
