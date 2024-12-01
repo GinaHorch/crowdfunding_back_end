@@ -156,3 +156,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Custom error views
 HANDLER404 = 'crowdfunding.views.custom_404_view'
 HANDLER500 = 'crowdfunding.views.custom_500_view'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
