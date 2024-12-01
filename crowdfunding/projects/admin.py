@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Project, Pledge, Category
-from organisations.models import OrganisationProfile
+from users.models import CustomUser
 
 # Register your models here
 class PledgeInline(admin.TabularInline):

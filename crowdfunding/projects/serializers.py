@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.apps import apps
 from .models import Project, Pledge, Category
+from users.models import CustomUser
 
 class PledgeSerializer(serializers.ModelSerializer):
   supporter = serializers.ReadOnlyField(source='supporter.id')
@@ -9,15 +10,18 @@ class PledgeSerializer(serializers.ModelSerializer):
       fields = ['id', 'supporter', 'project', 'amount', 'comment', 'anonymous', 'pledge_date']
  
 class ProjectSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source='owner.id')
+    organisation = serializers.ReadOnlyField(source='organisation.id')
     class Meta:
       model = Project
-      fields = ['id', 'title', 'description', 'target_amount', 'current_amount', 'owner', 'date_created', 'is_open', 'end_date', 'category', 'organisation']
+      fields = ['id', 'title', 'description', 'target_amount', 
+                'current_amount', 'organisation', 'date_created', 
+                'is_open', 'end_date', 'category']
 
     def create(self, validated_data):
        user = self.context['request'].user
-       validated_data['owner'] = user
-       validated_data['organisation'] = user.organisationprofile
+       if not user.is_organisation():
+          raise serializers.ValidationError("Only organisations can create projects.")
+       validated_data['organisation'] = user
        return super().create(validated_data)
     
 class CategorySerializer(serializers.ModelSerializer):
@@ -37,7 +41,7 @@ class ProjectDetailSerializer(ProjectSerializer):
      instance.image_url = validated_data.get('image_url', instance.image)
      instance.is_open = validated_data.get('is_open', instance.is_open)
      instance.date_created = validated_data.get('date_created', instance.date_created)
-     instance.owner = validated_data.get('owner', instance.owner)
+     instance.organisation = validated_data.get('organisation', instance.organisation)
      instance.save()
      return instance
 

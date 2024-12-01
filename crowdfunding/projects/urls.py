@@ -1,7 +1,6 @@
 from django.urls import path
 from . import views
 from .views import CategoryListCreate
-from organisations.views import OrganisationProfileList, OrganisationProfileDetail
  
 urlpatterns = [
   path('', views.ProjectList.as_view(), name='project-list'),  # List and create projects

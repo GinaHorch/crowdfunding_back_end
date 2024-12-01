@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from organisations.models import OrganisationProfile
 from django.core.exceptions import ValidationError
 
 class Category(models.Model):
@@ -27,7 +26,7 @@ class Project(models.Model):
       related_name='projects'
    ) 
    organisation = models.ForeignKey(
-      OrganisationProfile,
+      'users.CustomUser',
       on_delete=models.CASCADE,
       related_name='projects'
    )
@@ -54,7 +53,7 @@ class Pledge(models.Model):
        related_name='pledges'
    )
    supporter = models.ForeignKey(
-       get_user_model(),
+       'users.CustomUser',
        on_delete=models.CASCADE,
        related_name='pledges'
    )

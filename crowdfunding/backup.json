@@ -1,0 +1,1 @@
+[{"model": "projects.category", "pk": 1, "fields": {"name": "Muriels"}}, {"model": "projects.category", "pk": 2, "fields": {"name": "Art"}}, {"model": "projects.category", "pk": 3, "fields": {"name": "Languages"}}, {"model": "projects.category", "pk": 4, "fields": {"name": "New Category"}}
