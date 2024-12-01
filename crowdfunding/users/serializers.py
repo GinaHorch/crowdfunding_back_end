@@ -10,7 +10,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = [
-            'id', 'username', 'email', 'date_joined', 'role',
+            'id', 'username', 'email', 'date_joined', 'role', 'organisation_details',
             'organisation_name', 'organisation_contact', 'organisation_phone_number', 
             'organisation_ABN', 'is_charity', 'date_created', 'image_url',
         ]
@@ -30,7 +30,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     
     def validate(self, data):
         """Validate payload based on role."""
-        print("Incoming data:", data)  # Debugging line
+        print("Validating data:", data)  # Debugging line
 
         role = data.get('role', CustomUser.ROLE_USER)
 
@@ -68,16 +68,18 @@ class CustomUserSerializer(serializers.ModelSerializer):
                     raise serializers.ValidationError({
                         field: f"{field} must not be provided for users with the role 'user'."
                     })
-                
+        print("Validated data:", data)        
         return data
 
     def create(self, validated_data):
+        print("Creating user with validated data:", validated_data)
         """Create user with hashed password."""
         password = validated_data.pop('password', None)
         user = CustomUser(**validated_data)
         if password:
             user.set_password(password)
         user.save()
+        print("User created successfully:", user)
         return user
     
 # Serializer for Projects
