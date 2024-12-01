@@ -4,30 +4,16 @@ from projects.models import Project
 
 # Unified CustomUserSerializer
 class CustomUserSerializer(serializers.ModelSerializer):
-    # Nested organisation-specific fields
-    organisation_details = serializers.SerializerMethodField()
-
+   
     class Meta:
         model = CustomUser
         fields = [
-            'id', 'username', 'email', 'date_joined', 'role', 'organisation_details',
+            'id', 'username', 'email', 'date_joined', 'role',
             'organisation_name', 'organisation_contact', 'organisation_phone_number', 
             'organisation_ABN', 'is_charity', 'date_created', 'image_url',
         ]
         extra_kwargs = {'password': {'write_only': True}}
 
-    def get_organisation_details(self, obj):
-        # Include organisation-specific details only for users with the organisation role
-        if obj.role == CustomUser.ROLE_ORGANISATION:
-            return {
-                "organisation_name": obj.organisation_name,
-                "organisation_contact": obj.organisation_contact,
-                "organisation_phone_number": obj.organisation_phone_number,
-                "organisation_ABN": obj.organisation_ABN,
-                "is_charity": obj.is_charity,
-            }
-        return None
-    
     def validate(self, data):
         """Validate payload based on role."""
         print("Validating data:", data)  # Debugging line
