@@ -29,6 +29,9 @@ class CustomUserSerializer(serializers.ModelSerializer):
     
     def validate(self, data):
         """Validate payload based on role."""
+
+        print("incoming data:", data)
+        
         role = data.get('role', CustomUser.ROLE_USER)
         if role == CustomUser.ROLE_ORGANISATION:
             # Validate that organisation-specific fields are present
