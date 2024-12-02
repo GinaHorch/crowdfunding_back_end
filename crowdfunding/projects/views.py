@@ -1,3 +1,5 @@
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView # Required for class-based views like APIView
 from rest_framework.response import Response # Required for sending responses
 from rest_framework import status, permissions
@@ -79,6 +81,15 @@ class ProjectDetail(APIView):
       project = self.get_object(pk)
       project.delete()
       return Response(status=status.HTTP_204_NO_CONTENT)
+
+class ProjectDetail(RetrieveUpdateDestroyAPIView):
+    queryset = Project.objects.all()
+    serializer_class = ProjectDetailSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Ensure only projects created by the requesting organisation can be accessed
+        return super().get_queryset().filter(organisation=self.request.user)
 
 class PledgeList(APIView):
    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
