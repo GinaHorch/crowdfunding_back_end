@@ -29,9 +29,9 @@ class ProjectList(ListAPIView):
     data["organisation"] = request.user.id
 
     # Validate and save the project
-    serializer = ProjectSerializer(data=data, context={'request': request})
+    serializer = ProjectSerializer(data=data, context={"request": request})
     serializer.is_valid(raise_exception=True)
-    serializer.save(owner=request.user)
+    serializer.save(organisation=request.user)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
   
 class ProjectDetail(APIView):

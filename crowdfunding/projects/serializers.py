@@ -19,16 +19,21 @@ class ProjectSerializer(serializers.ModelSerializer):
                 'is_open', 'end_date', 'category']
 
     def create(self, validated_data):
-       user = self.context['request'].user
-      #  if user is None:
-      #     raise serializers.ValidationError("No user context available.")
-       if not user.is_organisation():
-          raise serializers.ValidationError("Only organisations can create projects.")
-       validated_data['organisation'] = user
-      #  valid_fields = {key: validated_data[key] for key in validated_data if key in [field.name for field in Project._meta.fields]}
-      #  return super().create(validated_data)
-       return Project.objects.create(**validated_data)
-    
+        print("Context:", self.context)
+        print("Validated Data:", validated_data)
+        # Retrieve the user from the serializer's context
+        user = self.context['request'].user
+        
+        # Ensure the user has the organisation role
+        if not user.is_organisation():
+            raise serializers.ValidationError("Only organisations can create projects.")
+        
+        # Add the organisation to the validated data
+        validated_data['organisation'] = user
+        
+        # Use the model's create method to create the object
+        return super().create(validated_data)
+            
 class CategorySerializer(serializers.ModelSerializer):
    class Meta:
       model = Category
