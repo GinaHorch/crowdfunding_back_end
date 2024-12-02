@@ -35,7 +35,7 @@ SECRET_KEY = os.environ.get(
 #     'DJANGO_DEBUG'
 # ) != 'False'
 
-heroku config:set DJANGO_DEBUG=True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
 LOGGING = {
     'version': 1,
