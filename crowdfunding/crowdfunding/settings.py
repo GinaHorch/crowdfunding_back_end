@@ -31,11 +31,11 @@ SECRET_KEY = os.environ.get(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = os.environ.get(
-#     'DJANGO_DEBUG'
-# ) != 'False'
+DEBUG = os.environ.get(
+    'DJANGO_DEBUG'
+) == 'False'
 
-DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
+# DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
 LOGGING = {
     'version': 1,
@@ -52,7 +52,7 @@ LOGGING = {
 }
 
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["culture4kids.herokuapp.com"]
 CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
@@ -184,3 +184,5 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.Argon2PasswordHasher',
     'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
 ]
+
+SECURE_SSL_REDIRECT = True

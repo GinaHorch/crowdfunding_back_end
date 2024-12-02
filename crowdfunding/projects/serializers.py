@@ -47,14 +47,7 @@ class ProjectDetailSerializer(ProjectSerializer):
   def update(self, instance, validated_data):
      # Prevent organisation change
      validated_data.pop('organisation', None)
-     instance.title = validated_data.get('title', instance.title)
-     instance.description = validated_data.get('description', instance.description)
-     instance.target_amount = validated_data.get('target_amount', instance.target_amount)
-     instance.image_url = validated_data.get('image_url', instance.image_url)
-     instance.is_open = validated_data.get('is_open', instance.is_open)
-     instance.end_date = validated_data.get('end_date', instance.end_date)
-     instance.save()
-     return instance
+     return super().update(instance, validated_data)
 
 class PledgeDetailSerializer(PledgeSerializer):
     def update(self, instance, validated_data):

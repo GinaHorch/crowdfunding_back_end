@@ -55,6 +55,12 @@ class ProjectDetail(APIView):
    
    def put(self, request, pk):
        project = self.get_object(pk)
+       if request.user != project.organisation:
+            return Response(
+                {"detail": "You do not have permission to edit this project."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
        serializer = ProjectDetailSerializer(
            instance=project,
            data=request.data,
