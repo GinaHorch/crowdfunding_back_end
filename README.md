@@ -70,10 +70,10 @@ Who are your intended audience (supporters/pledges)
    As a new user, I want to create an account so that I can log in and participate in projects.
 2. User login
    As a registered user, I want to login so that I can access my account and depending on my permissions, I can support projects or create projects.
-3. Create an Organisation
-   As a registered user, I can create an organisation that provides services to children in care. I will need an ABN and indicate if my organisation is a registered charity.
+3. Select role - User or Organisation
+   As a registered user, I can make pledges. If I fulfil the requirements of an organisation (ABN), I can create projects for children in care. I will need an ABN and indicate if my organisation is a registered charity.
 4. Create a Project
-   As a registered user who is the owner of an organisation, I want to create a new crowdfunding project so that I can raise funds for programs that support Aboriginal children in care. 
+   As a registered user with the role of organisation, I can create a new crowdfunding project so that I can raise funds for programs that support Aboriginal children in care. 
 5. Pledge to a Project
    As a supporter, I want to pledge money to a project so that I can help fund a project I believe in.
 6. View all projects
@@ -99,6 +99,18 @@ Who are your intended audience (supporters/pledges)
   "email": "example@example.com",
   "password": "securepassword123"
    }`
+  Select your role - user or organisation
+  **Body Data for organisations** (in JSON):
+   `{
+  "organisation_name": "Awesome Organisation",
+  "contact_name": "John Doe",
+  "phone_number": "123456789",
+  "email": "contact@awesome.org",
+  "abn": "1234567890",
+  "charity_status": true,
+  "image_url": "https://example.com/logo.png"
+    }`
+   
 4. **Response:** Upon successful registration, you will receive a response with the created user details, excluding the password, and status code `201 Created`. It looks like:
    `{
   "id": 1,
@@ -115,37 +127,6 @@ Who are your intended audience (supporters/pledges)
   "password": "securepassword123"
    }`
 4. **Response:** You'll receive a token like this:
-   `{
-  "token": "your-authentication-token"
-    }`
-
-**Create an Organisation(only once logged in)**
-
-5. **Enpoint:** POST /organisations/
-6. **Description:** This endpoint creates a new organisation that a user can manage. Only logged-in users can create an organisation.
-7. **Authorisation:** Token <your-token-here>
-8. **Body Data** (in JSON):
-   `{
-  "organisation_name": "Awesome Organisation",
-  "contact_name": "John Doe",
-  "phone_number": "123456789",
-  "email": "contact@awesome.org",
-  "abn": "1234567890",
-  "charity_status": true,
-  "image_url": "https://example.com/logo.png"
-    }`
-9.  **Response:** On success, returns organisation details with status code `201 Created`.
-
-**Generate user token for organisation**
-
-10. **Endpoint:** POST /api-token-auth/organisations/
-11. **Description:** This endpoint generates a token for the owner of an organisation to authenticate further requests.
-12. **Body data** (in JSON):
-   `{
-  "username": "example_user",
-  "password": "securepassword123"
-   }`
-13. **Response:** You'll receive a token like this:
    `{
   "token": "your-authentication-token"
     }`
@@ -189,9 +170,6 @@ Who are your intended audience (supporters/pledges)
 | /users/ | GET | Returns all users. | N/A | 200 | Must be superuser. |
 | /users/ | POST | Register a new user. | user object |201 | N/A |
 | /api-token-auth/users/ | POST | Generate a user token for authentication | user object | 200 | Must be logged in. |
-| /organisations/ | GET | Returns all organisations. | N/A | 200 | N/A |
-| /organisations/ | POST | Create a new organisation. | organisation object |201 | Must be logged in. |
-| /api-token-auth/organisations/ | POST | Generate a user token for authentication | organisation object | 200 | Must be logged in. |
 
 ### DB Schema
 [Link to ERD](https://github.com/GinaHorch/crowdfunding_back_end/blob/3862dd649246290cf38d8832968705ca631ea891/ERD.drawio)
@@ -212,7 +190,7 @@ Who are your intended audience (supporters/pledges)
 
 ---
 
-### **Organisations Table**
+### **Organisation Fields**
 | Field Name      | Data Type   | Constraints         | Description                |
 |-----------------|-------------|---------------------|----------------------------|
 | `id`            | `AutoField` | Primary Key          | Unique ID for each organisation |
