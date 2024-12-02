@@ -31,9 +31,26 @@ SECRET_KEY = os.environ.get(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get(
-    'DJANGO_DEBUG'
-) != 'False'
+# DEBUG = os.environ.get(
+#     'DJANGO_DEBUG'
+# ) != 'False'
+
+heroku config:set DJANGO_DEBUG=True
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG' if os.getenv('DEBUG') == 'True' else 'INFO',
+    },
+}
+
 
 ALLOWED_HOSTS = ["*"]
 CORS_ORIGIN_ALLOW_ALL = True
