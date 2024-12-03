@@ -53,13 +53,16 @@ LOGGING = {
 
 
 ALLOWED_HOSTS = ["culture4kids-7a814d1e1904.herokuapp.com", "127.0.0.1", "localhost"]
+
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4173",  # Local frontend
+    "http://localhost:5173",  # Local frontend
     "https://sparkling-torte-d2718c.netlify.app",  # Deployed frontend
 ]
 
-# Application definition
+# Optionally, allow credentials if needed
+CORS_ALLOW_CREDENTIALS = True
 
+# Application definition
 INSTALLED_APPS = [
     'projects.apps.ProjectsConfig',
     'users.apps.UsersConfig',
