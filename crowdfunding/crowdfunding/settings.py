@@ -52,7 +52,7 @@ LOGGING = {
 }
 
 
-ALLOWED_HOSTS = ["culture4kids-7a814d1e1904.herokuapp.com", '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ["culture4kids-7a814d1e1904.herokuapp.com", '127.0.0.1', 'localhost:4173']
 CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
