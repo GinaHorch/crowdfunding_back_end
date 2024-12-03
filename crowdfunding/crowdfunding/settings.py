@@ -52,8 +52,11 @@ LOGGING = {
 }
 
 
-ALLOWED_HOSTS = ["culture4kids-7a814d1e1904.herokuapp.com", '127.0.0.1', 'localhost:4173']
-CORS_ORIGIN_ALLOW_ALL = True
+ALLOWED_HOSTS = ["culture4kids-7a814d1e1904.herokuapp.com", "127.0.0.1", "localhost"]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4173",  # Local frontend
+    "https://sparkling-torte-d2718c.netlify.app",  # Deployed frontend
+]
 
 # Application definition
 
