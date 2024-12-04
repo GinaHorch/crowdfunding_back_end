@@ -25,7 +25,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         
         # Ensure the user has the organisation role
-        if not user.is_organisation():
+        if not user.is_authenticated or not user.is_organisation():
             raise serializers.ValidationError("Only organisations can create projects.")
         
         # Add the organisation to the validated data

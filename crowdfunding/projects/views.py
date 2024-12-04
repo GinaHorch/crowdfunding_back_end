@@ -1,4 +1,4 @@
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView # Required for class-based views like APIView
 from rest_framework.response import Response # Required for sending responses
@@ -12,84 +12,69 @@ from .permissions import IsOwnerOrReadOnly, IsSupporterOrReadOnly
 
 class ProjectPagination(PageNumberPagination):
    page_size = 10
+
 class ProjectList(ListAPIView):
-  queryset = Project.objects.all()
-  serializer_class = ProjectSerializer
-  permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-  pagination_class = ProjectPagination
+    serializer_class = ProjectSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    pagination_class = ProjectPagination
 
-  def post(self, request):
-    # check if the user is an organisation
-    if not request.user.is_organisation():
-       return Response(
-          {"detail": "Only organisations can create projects."},
-                status=status.HTTP_403_FORBIDDEN,
-       )
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            # Authenticated users see all projects (adjust if necessary)
+            return Project.objects.all()
+        # Unauthenticated users see only open projects
+        return Project.objects.filter(is_open=True)
     
-    # Add organisation to the request data
-    data = request.data.copy()
-    data["organisation"] = request.user.id
 
-    # Validate and save the project
-    serializer = ProjectSerializer(data=data, context={"request": request})
-    serializer.is_valid(raise_exception=True)
-    serializer.save(organisation=request.user)
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
+class ProjectCreate(APIView):
+    permission_classes = [permissions.IsAuthenticated]  # Only authenticated users
+
+    def post(self, request):
+        # Ensure only organisations can create projects
+        if not hasattr(request.user, "is_organisation") or not request.user.is_organisation():
+            return Response(
+                {"detail": "Only organisations can create projects."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # Add organisation to the request data
+        data = request.data.copy()
+        data["organisation"] = request.user.id
+
+        # Validate and save the project
+        serializer = ProjectSerializer(data=data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
   
-class ProjectDetail(APIView):
-   permission_classes = [
+class ProjectDetail(RetrieveUpdateDestroyAPIView):
+    queryset = Project.objects.all()
+    serializer_class = ProjectDetailSerializer
+    permission_classes = [
        permissions.IsAuthenticatedOrReadOnly,
        IsOwnerOrReadOnly
    ]
 
-   def get_object(self, pk):
-       try:
-           project = Project.objects.get(pk=pk)
-           self.check_object_permissions(self.request, project)
-           return project
-       except Project.DoesNotExist:
-           raise Http404({"detail": "Project not found."})
-
-   def get(self, request, pk):
-       project = self.get_object(pk)
-       serializer = ProjectDetailSerializer(project)
-       return Response(serializer.data)
-   
-   def put(self, request, pk):
-       project = self.get_object(pk)
-       if request.user != project.organisation:
+    def update(self, request, *args, **kwargs):
+        # Restrict updates to the organisation that created the project
+        project = self.get_object()
+        if request.user != project.organisation:
             return Response(
                 {"detail": "You do not have permission to edit this project."},
                 status=status.HTTP_403_FORBIDDEN,
             )
+        return super().update(request, *args, **kwargs)
 
-       serializer = ProjectDetailSerializer(
-           instance=project,
-           data=request.data,
-           partial=True
-       )
-       if serializer.is_valid():
-           serializer.save()
-           return Response(serializer.data)
-
-       return Response(
-           serializer.errors,
-           status=status.HTTP_400_BAD_REQUEST
-       )
-   
-   def delete(self, request, pk):
-      project = self.get_object(pk)
-      project.delete()
-      return Response(status=status.HTTP_204_NO_CONTENT)
-
-class ProjectDetail(RetrieveUpdateDestroyAPIView):
-    queryset = Project.objects.all()
-    serializer_class = ProjectDetailSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def get_queryset(self):
-        # Ensure only projects created by the requesting organisation can be accessed
-        return super().get_queryset().filter(organisation=self.request.user)
+    def destroy(self, request, *args, **kwargs):
+        # Restrict deletion to the organisation that created the project
+        project = self.get_object()
+        if request.user != project.organisation:
+            return Response(
+                {"detail": "You do not have permission to delete this project."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        return super().destroy(request, *args, **kwargs)
 
 class PledgeList(APIView):
    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
