@@ -46,11 +46,14 @@ class CustomUser(AbstractUser):
                 raise ValidationError("Organisation fields must be empty for non-organisation users.")
         super().clean()
         
+    def has_role(self, role):
+        return self.is_active and self.role == role
+    
     def is_supporter(self):
-        return self.is_active and self.role == self.ROLE_USER
+        return self.has_role(self.ROLE_USER)
 
     def is_organisation(self):
-        return self.is_active and self.role == self.ROLE_ORGANISATION
+        return self.has_role(self.ROLE_ORGANISATION)
 
     def __str__(self):
-        return f"{self.username} ({self.role})"
+        return f"{self.username} ({self.role}) - {self.email}"
