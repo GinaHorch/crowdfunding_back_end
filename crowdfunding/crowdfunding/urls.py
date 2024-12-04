@@ -20,7 +20,7 @@ from users.api_views import TokenAuthView
 from django.conf import settings
 from django.conf.urls.static import static
 from django.http import JsonResponse
-
+from users.views import SignupView
 
 urlpatterns = [
     path('', lambda request: JsonResponse({"message": "Welcome to the API!"})),
@@ -28,6 +28,7 @@ urlpatterns = [
     path('projects/', include('projects.urls')),
     path('users/', include('users.urls')),
     path('api-token-auth/', TokenAuthView.as_view(), name='token-auth'),
+    path('signup/', SignupView.as_view(), name='signup'),
 ]
 if settings.DEBUG: 
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
