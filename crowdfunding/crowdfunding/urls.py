@@ -19,19 +19,15 @@ from django.urls import path, include
 from users.api_views import TokenAuthView
 from django.conf import settings
 from django.conf.urls.static import static
-from projects.views import CategoryListCreate, ProjectDetail
 from django.http import JsonResponse
-from django.urls import path, include
 
 
 urlpatterns = [
     path('', lambda request: JsonResponse({"message": "Welcome to the API!"})),
     path('admin/', admin.site.urls),
     path('projects/', include('projects.urls')),
-    path('projects/<int:pk>/', ProjectDetail.as_view(), name='project-detail'),
     path('users/', include('users.urls')),
     path('api-token-auth/', TokenAuthView.as_view(), name='token-auth'),
-    path('categories/', CategoryListCreate.as_view(), name='category-list-create'),
 ]
 if settings.DEBUG: 
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
