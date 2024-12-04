@@ -1,12 +1,17 @@
 from django.urls import path
 from . import views
 from .views import CategoryListCreate, ProjectList, ProjectCreate, ProjectDetail, PledgeList, PledgeDetail
+from django.http import JsonResponse
  
+def debug_view(request):
+    return JsonResponse({"message": "Projects URLs are being resolved!"})
+
 urlpatterns = [
-  path('projects/', ProjectList.as_view(), name='project-list'),
-  path('projects/create/', ProjectCreate.as_view(), name='project-create'),
-  path('projects/<int:pk>/', ProjectDetail.as_view(), name='project-detail'),
+  path('', ProjectList.as_view(), name='project-list'),
+  path('create/', ProjectCreate.as_view(), name='project-create'),
+  path('<int:pk>/', ProjectDetail.as_view(), name='project-detail'),
   path('pledges/', PledgeList.as_view(), name='pledge-list'),
   path('pledges/<int:pk>/', PledgeDetail.as_view(), name='pledge-detail'),
   path('categories/', CategoryListCreate.as_view(), name='category-list-create'),
+  path('debug/', debug_view, name='debug'),
 ]

@@ -14,17 +14,10 @@ class ProjectPagination(PageNumberPagination):
    page_size = 10
 
 class ProjectList(ListAPIView):
+    queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    pagination_class = ProjectPagination
-
-    def get_queryset(self):
-        if self.request.user.is_authenticated:
-            # Authenticated users see all projects (adjust if necessary)
-            return Project.objects.all()
-        # Unauthenticated users see only open projects
-        return Project.objects.filter(is_open=True)
-    
+    pagination_class = ProjectPagination 
 
 class ProjectCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]  # Only authenticated users
