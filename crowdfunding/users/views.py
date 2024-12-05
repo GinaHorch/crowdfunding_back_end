@@ -6,7 +6,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .models import CustomUser
-from .serializers import CustomUserSerializer
+from .serializers import CustomUserSerializer, SignupSerializer
 from projects.models import Project
 from .token_serializers import TokenSerializer
 from django.contrib.auth.models import User
@@ -123,99 +123,11 @@ class SignupView(APIView):
     permission_classes = [permissions.AllowAny]  # Signup is open to everyone
 
     def post(self, request):
-        # Extract user data
-        username = request.data.get("username")
-        email = request.data.get("email")
-        password = request.data.get("password")
-        role = request.data.get("role")  # 'user' or 'organisation'
-
-        # Validate common fields
-        if not username or not password or not role:
+        serializer = SignupSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
             return Response(
-                {"detail": "Username, password, email, and role are required."},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"message": "User created successfully!", "username": user.username, "role": user.role},
+                status=status.HTTP_201_CREATED
             )
-
-        # Ensure email is unique
-        if CustomUser.objects.filter(email=email).exists():
-            return Response(
-                {"detail": "A user with this email already exists."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Ensure username is unique
-        if CustomUser.objects.filter(username=username).exists():
-            return Response(
-                {"detail": "A user with this username already exists."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Handle organisation-specific validations
-        if role == CustomUser.ROLE_ORGANISATION:
-            organisation_name = request.data.get("organisation_name")
-            organisation_contact = request.data.get("organisation_contact")
-            organisation_phone_number = request.data.get("organisation_phone_number")
-            organisation_ABN = request.data.get("organisation_ABN")
-            is_charity = request.data.get("is_charity", False)
-
-            # Validate organisation fields
-            if not organisation_name or not organisation_ABN:
-                return Response(
-                    {"detail": "Organisation name and ABN are required for organisations."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            if not organisation_ABN.isdigit() or len(organisation_ABN) != 11:
-                return Response(
-                    {"detail": "ABN must be exactly 11 numeric digits."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            # Create organisation user
-            user = CustomUser.objects.create_user(
-                username=username,
-                email=email,
-                password=password,
-                role=role,
-                organisation_name=organisation_name,
-                organisation_contact=organisation_contact,
-                organisation_phone_number=organisation_phone_number,
-                organisation_ABN=organisation_ABN,
-                is_charity=is_charity,
-            )
-
-        elif role == CustomUser.ROLE_USER:
-            # Ensure organisation-specific fields are not provided for users
-            organisation_fields = [
-                "organisation_name",
-                "organisation_contact",
-                "organisation_phone_number",
-                "organisation_ABN",
-            ]
-            for field in organisation_fields:
-                if request.data.get(field):
-                    return Response(
-                        {"detail": f"{field} must be empty for users."},
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
-
-            # Create regular user
-            user = CustomUser.objects.create_user(
-                username=username,
-                email=email,
-                password=password,
-                role=role,
-            )
-
-        else:
-            return Response(
-                {"detail": "Invalid role. Must be 'user' or 'organisation'."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Save and return success response
-        user.save()
-        return Response(
-            {"message": "User created successfully!", "username": user.username, "role": user.role},
-            status=status.HTTP_201_CREATED,
-        )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
