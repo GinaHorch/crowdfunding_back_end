@@ -14,7 +14,7 @@ class ProjectPagination(PageNumberPagination):
    page_size = 10
 
 class ProjectList(ListAPIView):
-    queryset = Project.objects.all()
+    queryset = Project.objects.all().order_by("name")
     serializer_class = ProjectSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     pagination_class = ProjectPagination 
