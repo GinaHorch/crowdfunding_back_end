@@ -56,6 +56,7 @@ ALLOWED_HOSTS = ["culture4kids-7a814d1e1904.herokuapp.com", "127.0.0.1", "localh
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Local frontend
+    "http://localhost:4173",
     "https://sparkling-torte-d2718c.netlify.app",  # Deployed frontend
 ]
 
