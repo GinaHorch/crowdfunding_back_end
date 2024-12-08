@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import CategoryListCreate, ProjectList, ProjectCreate, ProjectDetail, PledgeList, PledgeDetail
+from .views import CategoryListCreate, ProjectList, ProjectCreate, ProjectDetail, PledgeList, PledgeDetail, ProjectPledgeCreateView
 from django.http import JsonResponse
  
 def debug_view(request):
@@ -13,5 +13,8 @@ urlpatterns = [
   path('pledges/', PledgeList.as_view(), name='pledge-list'),
   path('pledges/<int:pk>/', PledgeDetail.as_view(), name='pledge-detail'),
   path('categories/', CategoryListCreate.as_view(), name='category-list-create'),
+  path('projects/<int:project_id>/pledges/', ProjectPledgeCreateView.as_view(), name='project-pledges'),
+  path('pledges/', PledgeList.as_view(), name='pledge-list'),
+  path('pledges/<int:pk>/', PledgeDetail.as_view(), name='pledge-detail'),
   path('debug/', debug_view, name='debug'),
 ]

@@ -5,10 +5,15 @@ from users.models import CustomUser
 
 class PledgeSerializer(serializers.ModelSerializer):
   supporter = serializers.ReadOnlyField(source='supporter.id')
+  project = serializers.PrimaryKeyRelatedField(queryset=Project.objects.all())  # Ensure project exists
   class Meta:
       model = Pledge
       fields = ['id', 'supporter', 'project', 'amount', 'comment', 'anonymous', 'pledge_date']
- 
+  def validate_amount(self, value):
+     if value <= 0:
+        raise serializers.ValidationError("Pledge amount must be greater than zero.")
+     return value
+
 class ProjectSerializer(serializers.ModelSerializer):
     organisation = serializers.ReadOnlyField(source='organisation.id')
     class Meta:

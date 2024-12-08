@@ -69,6 +69,24 @@ class ProjectDetail(RetrieveUpdateDestroyAPIView):
             )
         return super().destroy(request, *args, **kwargs)
 
+class ProjectPledgeCreateView(APIView):
+    def post(self, request, project_id):
+        try:
+            project = Project.objects.get(pk=project_id)
+        except Project.DoesNotExist:
+            return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        if not project.is_open:
+            return Response(
+                {"detail": "You cannot pledge to a closed project."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = PledgeSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(supporter=request.user, project=project)  # Associate pledge with project
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 class PledgeList(APIView):
    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
