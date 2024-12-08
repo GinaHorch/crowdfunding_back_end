@@ -2,6 +2,9 @@ from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth import authenticate
 from users.models import CustomUser
+import logging
+
+logger = logging.getLogger(__name__)
 
 class TokenSerializer(serializers.Serializer):
     username = serializers.CharField()
@@ -12,19 +15,19 @@ class TokenSerializer(serializers.Serializer):
         username = data.get('username')
         password = data.get('password')
 
-        print(f"Attempting to authenticate username: {username}")
+        logger.info(f"Attempting to authenticate username: {username}")
         # Authenticate the user
         user = authenticate(username=username, password=password)
         if not user:
-            print("Authentication failed.")
+            logger.warning("Authentication failed.")
             if CustomUser.objects.filter(username=username).exists():
-                print("User exists but password is incorrect.")
+                logger.warning(f"Incorrect password for username '{username}'.")
             else:
-                print("User does not exist.")
+                logger.error(f"Username '{username}' does not exist.")
             raise AuthenticationFailed("Invalid username or password.")
 
         if not user.is_active:
-            print("Account is inactive.")
+            logger.warning(f"Account for username '{username}' is inactive.")
             raise AuthenticationFailed("This account is inactive.")
 
         # Add role to the serializer context

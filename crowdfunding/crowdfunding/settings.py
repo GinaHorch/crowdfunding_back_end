@@ -31,23 +31,63 @@ SECRET_KEY = os.environ.get(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get(
-    'DJANGO_DEBUG'
-) == 'False'
-
-# DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False').lower() == 'true'
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
+    'version': 1,  # Version 1 of logging configuration
+    'disable_existing_loggers': False,  # Keep Django's default loggers active
+
+    # Formatters define how logs look
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+
+    # Handlers send logs to specific destinations (console, files, etc.)
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'formatter': 'simple',  # Use the simple formatter for console logs
+        },
+        'file': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/django.log'),
+            'maxBytes': 10485760,  # 10 MB
+            'backupCount': 5,  # Keep 5 old log files
+            'formatter': 'verbose',
         },
     },
+
+    # Loggers define logging behavior for specific apps or Django itself
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],  # Send logs to console and file
+            'level': 'DEBUG' if os.getenv('DEBUG') == 'True' else 'INFO',
+            'propagate': True,  # Allow propagation to parent loggers
+        },
+        'users': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,  # Prevent logs from propagating to the root logger
+        },
+        'projects': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+
+    # Root logger handles logs not caught by other loggers
     'root': {
-        'handlers': ['console'],
-        'level': 'DEBUG' if os.getenv('DEBUG') == 'True' else 'INFO',
+        'handlers': ['console', 'file'],  # Send uncategorized logs to console and file
+        'level': 'DEBUG' if DEBUG else 'INFO',
     },
 }
 
