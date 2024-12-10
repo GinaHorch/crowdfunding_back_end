@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 import dj_database_url
 from dotenv import load_dotenv
+from corsheaders.defaults import default_headers
  
 load_dotenv("../.env")
 
@@ -65,6 +66,10 @@ CORS_ALLOWED_ORIGINS = [
 
 # Optionally, allow credentials if needed
 CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "Authorization",
+]
 
 # Application definition
 INSTALLED_APPS = [
