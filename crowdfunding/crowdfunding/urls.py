@@ -27,7 +27,7 @@ urlpatterns = [
     path('projects/', include('projects.urls')),
     path('users/', include('users.urls')),
     path('signup/', SignupView.as_view(), name='signup'),
-    path('login/', include('login.urls')),
+    path('login/', include('users.urls')),
 ]
 if settings.DEBUG: 
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
