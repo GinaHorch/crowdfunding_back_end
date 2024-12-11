@@ -23,6 +23,9 @@ class ProjectCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]  # Only authenticated users
 
     def post(self, request):
+        print("Request Headers:", request.headers)
+        print("Authenticated User:", request.user) 
+
         # Ensure only organisations can create projects
         if not hasattr(request.user, "is_organisation") or not request.user.is_organisation():
             return Response(
