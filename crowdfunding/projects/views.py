@@ -25,6 +25,7 @@ class ProjectCreate(APIView):
     def post(self, request):
         print("Request Headers:", request.headers)
         print("Authenticated User:", request.user) 
+        print("Request Data:", request.data)
 
         # Ensure only organisations can create projects
         if not hasattr(request.user, "is_organisation") or not request.user.is_organisation():
@@ -38,12 +39,16 @@ class ProjectCreate(APIView):
         data["organisation"] = request.user.id
 
         # Validate and save the project
-        serializer = ProjectSerializer(data=data, context={"request": request})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        try:
+            serializer = ProjectSerializer(data=data, context={"request": request})
+            serializer.is_valid(raise_exception=True)
+            print("Validated Data", serializer.validated_data)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            print("Serializer Error:", str(e))  # Debug serializer errors
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
-  
 class ProjectDetail(RetrieveUpdateDestroyAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectDetailSerializer
