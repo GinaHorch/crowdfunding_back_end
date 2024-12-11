@@ -260,3 +260,18 @@ Who are your intended audience (supporters/pledges)
 ### A screenshot of Insomnia, demonstrating a token being returned.
 
 ![GenerateOrganisationToken](ScreenShotPOST-GenerateOrganisationToken.png "Screenshot of generating a token for an organisation")
+
+### Token Authentication
+
+#### Generate Tokens:
+Use the `/api-token-auth/` endpoint to generate tokens for users. 
+
+**Request:**
+```http
+POST /api-token-auth/
+Content-Type: application/json
+
+{
+    "username": "your_username",
+    "password": "your_password"
+}

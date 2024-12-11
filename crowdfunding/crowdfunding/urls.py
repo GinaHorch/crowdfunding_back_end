@@ -16,7 +16,6 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from users.api_views import TokenAuthView
 from django.conf import settings
 from django.conf.urls.static import static
 from django.http import JsonResponse
@@ -27,7 +26,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('projects/', include('projects.urls')),
     path('users/', include('users.urls')),
-    path('api-token-auth/', TokenAuthView.as_view(), name='token-auth'),
     path('signup/', SignupView.as_view(), name='signup'),
 ]
 if settings.DEBUG: 
