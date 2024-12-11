@@ -27,6 +27,7 @@ urlpatterns = [
     path('projects/', include('projects.urls')),
     path('users/', include('users.urls')),
     path('signup/', SignupView.as_view(), name='signup'),
+    path('api/token-auth/', include('users.urls')),
     path('api/', include ('users.urls')),
 ]
 if settings.DEBUG: 
