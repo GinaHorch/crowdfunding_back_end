@@ -14,7 +14,7 @@ urlpatterns = [
   path('pledges/<int:pk>/', PledgeDetail.as_view(), name='pledge-detail'),
   path('projects/<int:project_id>/pledges/', ProjectPledgeCreateView.as_view(), name='project-pledges'),
 
-  path('categories/', CategoryListCreate.as_view(), name='category-list-create'),
+  path('categories/', CategoryListCreate.as_view(), name='categories-list-create'),
   
   path('debug/', debug_view, name='debug'),
 ]
