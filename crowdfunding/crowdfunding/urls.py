@@ -29,7 +29,7 @@ urlpatterns = [
     path('signup/', SignupView.as_view(), name='signup'),
     path('api-token-auth/', include('users.urls')),
     path('api/', include ('users.urls')),
-    path('categories/', include('categories.urls')),
+    path('category/', include('category.urls')),
 ]
 if settings.DEBUG: 
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

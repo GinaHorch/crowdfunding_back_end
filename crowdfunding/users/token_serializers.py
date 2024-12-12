@@ -14,8 +14,12 @@ class TokenSerializer(serializers.Serializer):
 
         # Authenticate the user
         user = authenticate(username=username, password=password)
+        print("User:", user)
+
         if not user:
+            print("User not found")
             if CustomUser.objects.filter(username=username).exists():
+                print("User exists but authentication failed")
                 raise AuthenticationFailed("Invalid username or password.")
 
         if not user.is_active:
