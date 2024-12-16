@@ -15,7 +15,7 @@ Your crowdfunding project must:
   - [x] Title
   - [x] Owner (a user)
   - [x] Description
-  - [x] Image
+  - [x] Image - changes made to allow users in the frontend to upload their own images
   - [x] Target amount to fundraise
   - [x] Whether it is currently open to accepting new supporters or not
   - [x] When the project was created
