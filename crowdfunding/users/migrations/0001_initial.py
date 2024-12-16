@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
                 ('role', models.CharField(choices=[('user', 'User'), ('organisation', 'Organisation')], default='user', max_length=20)),
                 ('email', models.EmailField(max_length=254, unique=True)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
-                ('image_url', models.URLField(blank=True, null=True)),
+                ('image', models.ImageField(blank=True, null=True)),
                 ('organisation_name', models.CharField(blank=True, max_length=255, null=True)),
                 ('organisation_contact', models.CharField(blank=True, max_length=255, null=True)),
                 ('organisation_phone_number', models.CharField(blank=True, max_length=15, null=True)),

@@ -33,10 +33,16 @@ class ProjectCreate(APIView):
                 {"detail": "Only organisations can create projects."},
                 status=status.HTTP_403_FORBIDDEN,
             )
+        # Get the image from the request
+        image = request.FILES.get('image')
 
         # Add organisation to the request data
         data = request.data.copy()
         data["organisation"] = request.user.id
+
+        # If an image is provided, add it to the request data
+        if image:
+            data["image"] = image
 
         # Validate and save the project
         try:
@@ -172,6 +178,24 @@ class CategoryListCreate(APIView):
       categories = Category.objects.all()
       serializer = CategorySerializer(categories, many=True)
       return Response(serializer.data)
+
+class ProjectUpdateView(APIView):
+    def put(self, request, pk):
+        project = Project.objects.get(pk=pk)
+        # Handle project update, including image replacement
+        image = request.FILES.get('image')
+        if image:
+            project.image = image
+        # ... other project fields ...
+        project.save()
+        serializer = ProjectSerializer(project)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class ProjectImageView(APIView):
+    def post(self, request):
+        image = request.FILES.get('image')
+        return Response({'message': 'Image uploaded successfully'}, status=status.HTTP_201_CREATED)
+
 
 def custom_404_view(request, exception=None):
    return Response({'error':'The resource was not found'}, status=status.HTTP_404_NOT_FOUND)

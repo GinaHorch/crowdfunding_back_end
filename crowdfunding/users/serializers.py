@@ -10,7 +10,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'username', 'email', 'date_joined', 'role',
             'organisation_name', 'organisation_contact', 'organisation_phone_number', 
-            'organisation_ABN', 'is_charity', 'date_created', 'image_url',
+            'organisation_ABN', 'is_charity', 'date_created', 'image',
         ]
         extra_kwargs = {'password': {'write_only': True}}
 

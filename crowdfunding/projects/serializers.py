@@ -16,11 +16,11 @@ class PledgeSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     organisation = serializers.ReadOnlyField(source='organisation.id')
-    image_url = serializers.URLField(required=False, allow_blank=True)
+    image = serializers.ImageField(allow_null=True)
     class Meta:
       model = Project
       fields = ['id', 'title', 'description', 'target_amount', 
-                'current_amount', 'organisation', 'image_url',
+                'current_amount', 'organisation', 'image',
                 'date_created', 'location',
                 'is_open', 'end_date', 'category']
 

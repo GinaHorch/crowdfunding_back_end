@@ -14,7 +14,7 @@ class CustomUserAdmin(UserAdmin):
                 'organisation_phone_number', 
                 'organisation_ABN', 
                 'is_charity', 
-                'image_url'
+                'image'
             )
         }),
     )

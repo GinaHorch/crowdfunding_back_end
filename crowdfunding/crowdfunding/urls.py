@@ -30,7 +30,5 @@ urlpatterns = [
     path('signup/', SignupView.as_view(), name='signup'),
     path('api-token-auth/', TokenAuthView.as_view(), name='api-token-auth'),
     path('api/', include ('users.urls')),
-    # path('category/', include('category.urls')),
-]
-if settings.DEBUG: 
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
