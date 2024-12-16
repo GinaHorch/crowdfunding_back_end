@@ -191,12 +191,6 @@ class ProjectUpdateView(APIView):
         serializer = ProjectSerializer(project)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-class ProjectImageView(APIView):
-    def post(self, request):
-        image = request.FILES.get('image')
-        return Response({'message': 'Image uploaded successfully'}, status=status.HTTP_201_CREATED)
-
-
 def custom_404_view(request, exception=None):
    return Response({'error':'The resource was not found'}, status=status.HTTP_404_NOT_FOUND)
 
