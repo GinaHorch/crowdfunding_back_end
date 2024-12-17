@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.apps import apps
 from .models import Project, Pledge, Category
 from users.models import CustomUser
+from django.db.models import Sum
 
 class PledgeSerializer(serializers.ModelSerializer):
   supporter = serializers.ReadOnlyField(source='supporter.id')

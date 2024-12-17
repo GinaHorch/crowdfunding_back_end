@@ -42,6 +42,10 @@ class Project(models.Model):
          raise ValidationError("Current amount cannot be negative.")
       if self.current_amount > self.target_amount:
          raise ValidationError("Current amount cannot exceed target amount.")
+   
+   def save(self, *args, **kwargs):
+      self.clean()
+      super().save(*args, **kwargs)
     
 class Pledge(models.Model):
    amount = models.IntegerField()

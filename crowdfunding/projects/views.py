@@ -99,7 +99,11 @@ class ProjectPledgeCreateView(APIView):
 
         serializer = PledgeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(supporter=request.user, project=project)  # Associate pledge with project
+
+        pledge = serializer.save(supporter=request.user, project=project)  # Associate pledge with project
+        project.current_amount += pledge.amount
+        project.save()
+        
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class PledgeList(APIView):
