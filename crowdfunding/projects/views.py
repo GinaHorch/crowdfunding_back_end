@@ -185,6 +185,7 @@ class ProjectUpdateView(APIView):
     def patch(self, request, pk):
         try:
             project = Project.objects.get(pk=pk)
+            print("Request Files:", request.FILES)
         except Project.DoesNotExist:
             return Response({"detail": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -198,7 +199,7 @@ class ProjectUpdateView(APIView):
         if "image" in request.FILES:
             data["image"] = request.FILES["image"]
         
-        serializer = ProjectSerializer(project, data=data, partial=True)
+        serializer = ProjectSerializer(project, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
