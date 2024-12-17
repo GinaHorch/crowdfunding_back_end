@@ -23,18 +23,18 @@ class ProjectSerializer(serializers.ModelSerializer):
       fields = ['id', 'title', 'description', 'target_amount', 
                 'current_amount', 'organisation', 'image',
                 'date_created', 'location',
-                'is_open', 'end_date', 'category']
+                'is_open', 'end_date', 'category', 'pledges']
    pledges = serializers.SerializerMethodField()   # dynamically include pledges
    current_amount = serializers.SerializerMethodField()  # dynamically include current amount
 
    def get_pledges(self, obj):
       """Return all pledges for the project."""
-      pledges = obj.pledge_set.all()
+      pledges = obj.pledges.all()
       return PledgeSerializer(pledges, many=True).data
    
    def get_current_amount(self, obj):
       """Calculate total pledged amount."""
-      total = obj.pledge_set.aggregate(total=Sum('amount'))['total']
+      total = obj.pledges.aggregate(total=Sum('amount'))['total']
       return total or 0  # Default to 0 if there are no pledges
 
    def create(self, validated_data):
