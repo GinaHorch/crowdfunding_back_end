@@ -63,7 +63,14 @@ class ProjectDetail(RetrieveUpdateDestroyAPIView):
        permissions.IsAuthenticatedOrReadOnly,
        IsOwnerOrReadOnly
    ]
-
+    def get(self, request, project_id):
+        try:
+            project = Project.objects.get(pk=project_id)
+        except Project.DoesNotExist:
+            return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = ProjectDetailSerializer(project)
+        return Response(serializer.data)
+    
     def update(self, request, *args, **kwargs):
         # Restrict updates to the organisation that created the project
         project = self.get_object()

@@ -48,7 +48,7 @@ class Project(models.Model):
       super().save(*args, **kwargs)
     
 class Pledge(models.Model):
-   amount = models.IntegerField()
+   amount = models.PositiveIntegerField()
    comment = models.CharField(max_length=200, blank=True)
    anonymous = models.BooleanField(default=False)
    pledge_date = models.DateTimeField(auto_now_add=True)

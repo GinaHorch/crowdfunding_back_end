@@ -16,16 +16,28 @@ class PledgeSerializer(serializers.ModelSerializer):
      return value
 
 class ProjectSerializer(serializers.ModelSerializer):
-    organisation = serializers.ReadOnlyField(source='organisation.id')
-    image = serializers.ImageField(allow_null=True)
-    class Meta:
+   organisation = serializers.ReadOnlyField(source='organisation.id')
+   image = serializers.ImageField(allow_null=True)
+   class Meta:
       model = Project
       fields = ['id', 'title', 'description', 'target_amount', 
                 'current_amount', 'organisation', 'image',
                 'date_created', 'location',
                 'is_open', 'end_date', 'category']
+   pledges = serializers.SerializerMethodField()   # dynamically include pledges
+   current_amount = serializers.SerializerMethodField()  # dynamically include current amount
 
-    def create(self, validated_data):
+   def get_pledges(self, obj):
+      """Return all pledges for the project."""
+      pledges = obj.pledge_set.all()
+      return PledgeSerializer(pledges, many=True).data
+   
+   def get_current_amount(self, obj):
+      """Calculate total pledged amount."""
+      total = obj.pledge_set.aggregate(total=Sum('amount'))['total']
+      return total or 0  # Default to 0 if there are no pledges
+
+   def create(self, validated_data):
         print("Context:", self.context)
         print("Validated Data:", validated_data)
         # Retrieve the user from the serializer's context
@@ -46,7 +58,7 @@ class CategorySerializer(serializers.ModelSerializer):
       model = Category
       fields = '__all__'
 class ProjectDetailSerializer(ProjectSerializer):
-  pledges = PledgeSerializer(many=True, read_only=True)
+  pledges = PledgeSerializer(many=True, read_only=True, source='pledges')
   class Meta:
      model = Project
      fields = ProjectSerializer.Meta.fields + ['pledges']
