@@ -6,6 +6,7 @@ from rest_framework import status, permissions
 from rest_framework.generics import ListAPIView # Used for paginated ListAPIView
 from rest_framework.pagination import PageNumberPagination
 from django.http import Http404
+import os
 from .models import Project, Pledge, Category
 from .serializers import ProjectSerializer, PledgeSerializer, CategorySerializer, ProjectDetailSerializer, PledgeDetailSerializer
 from .permissions import IsOwnerOrReadOnly, IsSupporterOrReadOnly
@@ -185,25 +186,37 @@ class ProjectUpdateView(APIView):
     def patch(self, request, pk):
         try:
             project = Project.objects.get(pk=pk)
-            print("Request Files:", request.FILES)
+            print("Request Files in projects/views:", request.FILES)
+            if not request.FILES:
+                print("Request Files is empty")
         except Project.DoesNotExist:
             return Response({"detail": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
 
         if request.user != project.organisation:
             return Response(
                 {"detail": "You do not have permission to edit this project."},
-                status=status.HTTP_403_FORBIDDEN,
+                status=status.HTTP_403_FORBIDDEN
             )
-        # Handle partial update, including image upload
+        
         data = request.data.copy()
         if "image" in request.FILES:
             data["image"] = request.FILES["image"]
+            print("Request Data in projects/views:", request.data)
         
         serializer = ProjectSerializer(project, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def post(self, request):
+        print("Request Files:", request.FILES)
+        media_dir = settings.MEDIA_ROOT
+        if not os.access(media_dir, os.W_OK):
+            print(f"Media directory '{media_dir}' is not writable")
+        else:
+            print(f"Media directory '{media_dir}' is writable")
+    
         
 def custom_404_view(request, exception=None):
    return Response({'error':'The resource was not found'}, status=status.HTTP_404_NOT_FOUND)
