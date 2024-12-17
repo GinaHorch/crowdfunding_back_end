@@ -180,17 +180,30 @@ class CategoryListCreate(APIView):
       return Response(serializer.data)
 
 class ProjectUpdateView(APIView):
-    def put(self, request, pk):
-        project = Project.objects.get(pk=pk)
-        # Handle project update, including image replacement
-        image = request.FILES.get('image')
-        if image:
-            project.image = image
-        # ... other project fields ...
-        project.save()
-        serializer = ProjectSerializer(project)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
+
+    def patch(self, request, pk):
+        try:
+            project = Project.objects.get(pk=pk)
+        except Project.DoesNotExist:
+            return Response({"detail": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        if request.user != project.organisation:
+            return Response(
+                {"detail": "You do not have permission to edit this project."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        # Handle partial update, including image upload
+        data = request.data.copy()
+        if "image" in request.FILES:
+            data["image"] = request.FILES["image"]
+        
+        serializer = ProjectSerializer(project, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
 def custom_404_view(request, exception=None):
    return Response({'error':'The resource was not found'}, status=status.HTTP_404_NOT_FOUND)
 
