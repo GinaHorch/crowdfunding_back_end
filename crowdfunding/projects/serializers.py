@@ -23,7 +23,7 @@ class ProjectSerializer(serializers.ModelSerializer):
       fields = ['id', 'title', 'description', 'target_amount', 
                 'current_amount', 'organisation', 'image',
                 'date_created', 'location',
-                'is_open', 'end_date', 'category' ]
+                'is_open', 'end_date', 'category', 'pledges' ]
    pledges = serializers.SerializerMethodField()   # dynamically include pledges
    current_amount = serializers.SerializerMethodField()  # dynamically include current amount
 
