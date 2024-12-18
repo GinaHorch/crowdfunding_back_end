@@ -58,7 +58,7 @@ class CategorySerializer(serializers.ModelSerializer):
       model = Category
       fields = '__all__'
 class ProjectDetailSerializer(ProjectSerializer):
-  pledges = PledgeSerializer(many=True, read_only=True, source='pledges')
+  pledges = PledgeSerializer(many=True, read_only=True)
   class Meta:
      model = Project
      fields = ProjectSerializer.Meta.fields + ['pledges']
