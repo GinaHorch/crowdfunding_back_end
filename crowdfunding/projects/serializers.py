@@ -23,7 +23,7 @@ class ProjectSerializer(serializers.ModelSerializer):
       fields = ['id', 'title', 'description', 'target_amount', 
                 'current_amount', 'organisation', 'image',
                 'date_created', 'location',
-                'is_open', 'end_date', 'category', 'pledges']
+                'is_open', 'end_date', 'category' ]
    pledges = serializers.SerializerMethodField()   # dynamically include pledges
    current_amount = serializers.SerializerMethodField()  # dynamically include current amount
 
@@ -69,6 +69,7 @@ class ProjectDetailSerializer(ProjectSerializer):
      return super().update(instance, validated_data)
 
 class PledgeDetailSerializer(PledgeSerializer):
+    
     def update(self, instance, validated_data):
      instance.supporter = validated_data.get('supporter', instance.supporter)
      instance.amount = validated_data.get('amount', instance.amount)

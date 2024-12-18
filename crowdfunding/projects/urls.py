@@ -8,7 +8,7 @@ def debug_view(request):
 urlpatterns = [
   path('', ProjectList.as_view(), name='project-list'),
   path('create/', ProjectCreate.as_view(), name='project-create'),
-  path('<int:pk>/', ProjectDetail.as_view(), name='project-detail'),
+  path('projects/<int:pk>/', ProjectDetail.as_view(), name='project-detail'),
 
   path('pledges/', PledgeList.as_view(), name='pledge-list'),
   path('pledges/<int:pk>/', PledgeDetail.as_view(), name='pledge-detail'),
