@@ -5,11 +5,12 @@ from users.models import CustomUser
 from django.db.models import Sum
 
 class PledgeSerializer(serializers.ModelSerializer):
-  supporter = serializers.ReadOnlyField(source='supporter.id')
+  supporter_id = serializers.ReadOnlyField(source='supporter.id')
+  supporter_name = serializers.ReadOnlyField(source='supporter.username')
   project = serializers.PrimaryKeyRelatedField(queryset=Project.objects.all())  # Ensure project exists
   class Meta:
       model = Pledge
-      fields = ['id', 'supporter', 'project', 'amount', 'comment', 'anonymous', 'pledge_date']
+      fields = ['id', 'supporter_id', 'supporter_name', 'project', 'amount', 'comment', 'anonymous', 'pledge_date']
   def validate_amount(self, value):
      if value <= 0:
         raise serializers.ValidationError("Pledge amount must be greater than zero.")
