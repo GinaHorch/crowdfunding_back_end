@@ -169,8 +169,14 @@ class PledgeDetail(APIView):
     
     def delete(self, request, pk):
        pledge = self.get_object(pk)
-       pledge.delete()
-       return Response(status=status.HTTP_204_NO_CONTENT)
+       if pledge.supporter == request.user:
+            pledge.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+       else:
+            return Response(
+                {"detail": "You do not have permission to delete this pledge."},
+                status=status.HTTP_403_FORBIDDEN
+            )
 
 class CategoryListCreate(APIView):
     def post(self, request):
