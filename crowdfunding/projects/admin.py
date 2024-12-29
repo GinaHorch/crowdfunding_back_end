@@ -40,8 +40,8 @@ class ProjectAdmin(admin.ModelAdmin):
 
     def image_preview(self, obj):
         if obj.image:
-            return format_html(f'<img src="{obj.image.url}" style="max-height: 100px;"/>')
-        return "No Image"
+            return format_html('<img src="{}" style="max-height: 100px;"/>', obj.image.url)
+        return "-"
 
     image_preview.short_description = 'Image Preview'
 
@@ -53,3 +53,11 @@ class PledgeAdmin(admin.ModelAdmin):
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name',)
+
+def total_pledges(self, obj):
+    return obj.pledges.aggregate(total=Sum('amount'))['total'] or 0
+total_pledges.short_description = 'Total Pledged'
+
+@admin.register(Project)
+class ProjectAdmin(admin.ModelAdmin):
+    list_display = ['title', 'organisation_name', 'target_amount', 'total_pledges', 'remaining_amount']
