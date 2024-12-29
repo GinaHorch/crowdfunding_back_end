@@ -191,7 +191,7 @@ AWS_S3_REGION_NAME = 'ap-southeast-2'
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
 
 # Static Files
-STATIC_URL = f"https://culture4kids-crowdfunding.s3.amazonaws.com/static/"
+STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
 
 # only required locally
@@ -201,7 +201,7 @@ STATICFILES_DIRS = [
 ]
 
 # Media Files
-MEDIA_URL = f'https://culture4kids-crowdfunding.s3.amazonaws.com/media/'
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Additional S3 Settings for Public/Private Access Control

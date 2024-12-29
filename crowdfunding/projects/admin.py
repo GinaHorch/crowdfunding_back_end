@@ -9,17 +9,39 @@ class PledgeInline(admin.TabularInline):
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
     #Display extra fields in admin
-    list_display = ('title', 'get_organisation_name', 'target_amount', 'current_amount', 'is_open', 'date_created')
+    list_display = ('title', 'get_organisation_name', 'target_amount', 'current_amount', 'is_open', 'date_created', 'image_preview')
     list_filter = ('organisation', 'is_open')
     search_fields = ('title', 'description')
     ordering = ('-date_created',)
     inlines = [PledgeInline]
+    readonly_fields = ('image_preview',)
+
+    # Include image field in the admin form
+    fields = (
+        'title',
+        'description',
+        'image',
+        'image_preview',
+        'target_amount',
+        'current_amount',
+        'location',
+        'is_open',
+        'date_created',
+        'end_date',
+        'category',
+        'organisation',
+    )
+
 
     def get_organisation_name(self, obj):
         return getattr(obj.organisation, 'organisation_name', 'No Organisation')
-    #     return obj.organisation.organisation_name
-    # get_organisation_name.admin_order_field = 'organisation__organisation_name'
-    # get_organisation_name.short_description = 'Organisation Name'
+
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html(f'<img src="{obj.image.url}" style="max-height: 100px;"/>')
+        return "No Image"
+
+    image_preview.short_description = 'Image Preview'
 
 @admin.register(Pledge)
 class PledgeAdmin(admin.ModelAdmin):
