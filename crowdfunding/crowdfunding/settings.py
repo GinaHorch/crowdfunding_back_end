@@ -72,7 +72,9 @@ CORS_ALLOW_METHODS = [
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
-    "Authorization",
+    "contenttype",
+    "authorization",
+    "x-csrftoken",
 ]
 
 # Application definition
