@@ -172,7 +172,7 @@ Who are your intended audience (supporters/pledges)
 | /api-token-auth/users/ | POST | Generate a user token for authentication | user object | 200 | Must be logged in. |
 
 ### DB Schema
-[Link to ERD](https://github.com/GinaHorch/crowdfunding_back_end/blob/3862dd649246290cf38d8832968705ca631ea891/ERD.drawio)
+[Link to ERD](https://github.com/GinaHorch/crowdfunding_back_end/blob/88fc84e325916dae8a9e69909d6532e032fd7e45/crowdfunding/erd.png)
 ### A screenshot of the ERD
 
 ![ERD](ScreenShot-ERD.png "Screenshot of making a pledge")
