@@ -13,7 +13,8 @@ class Project(models.Model):
    description = models.TextField()
    target_amount = models.IntegerField()
    current_amount = models.IntegerField(default=0)
-   image_url = models.URLField(null=True, blank=True)
+   # image_url = models.URLField(null=True, blank=True)
+   image = models.ImageField(upload_to="", blank=True, null=True)
    location = models.TextField()
    is_open = models.BooleanField(default=True)
    date_created = models.DateTimeField(auto_now_add=True)
@@ -41,9 +42,13 @@ class Project(models.Model):
          raise ValidationError("Current amount cannot be negative.")
       if self.current_amount > self.target_amount:
          raise ValidationError("Current amount cannot exceed target amount.")
+   
+   def save(self, *args, **kwargs):
+      self.clean()
+      super().save(*args, **kwargs)
     
 class Pledge(models.Model):
-   amount = models.IntegerField()
+   amount = models.PositiveIntegerField()
    comment = models.CharField(max_length=200, blank=True)
    anonymous = models.BooleanField(default=False)
    pledge_date = models.DateTimeField(auto_now_add=True)

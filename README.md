@@ -15,7 +15,7 @@ Your crowdfunding project must:
   - [x] Title
   - [x] Owner (a user)
   - [x] Description
-  - [x] Image
+  - [x] Image - changes made to allow users in the frontend to upload their own images
   - [x] Target amount to fundraise
   - [x] Whether it is currently open to accepting new supporters or not
   - [x] When the project was created
@@ -77,7 +77,7 @@ Who are your intended audience (supporters/pledges)
 5. Pledge to a Project
    As a supporter, I want to pledge money to a project so that I can help fund a project I believe in.
 6. View all projects
-   As a visitor, I want to see all available projects, so that I can browse and decide which one to support.
+   As a visitor, I want to see all available projects, so that I can browse and decide which one to support. Once I found a project that aligns with my interests I can see details but I will be prompted to login or signup.
 7. View project details
    As a supporter, I want to view the specific details of a project so that I can understand the project's goals and track its progress.
 8. Update project details
@@ -260,3 +260,18 @@ Who are your intended audience (supporters/pledges)
 ### A screenshot of Insomnia, demonstrating a token being returned.
 
 ![GenerateOrganisationToken](ScreenShotPOST-GenerateOrganisationToken.png "Screenshot of generating a token for an organisation")
+
+### Token Authentication
+
+#### Generate Tokens:
+Use the `/api-token-auth/` endpoint to generate tokens for users. 
+
+**Request:**
+```http
+POST /api-token-auth/
+Content-Type: application/json
+
+{
+    "username": "your_username",
+    "password": "your_password"
+}

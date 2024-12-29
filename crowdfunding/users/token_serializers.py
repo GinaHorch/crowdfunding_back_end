@@ -12,19 +12,18 @@ class TokenSerializer(serializers.Serializer):
         username = data.get('username')
         password = data.get('password')
 
-        print(f"Attempting to authenticate username: {username}")
         # Authenticate the user
         user = authenticate(username=username, password=password)
+        print("User:", user)
+
         if not user:
-            print("Authentication failed.")
+            print("User not found")
             if CustomUser.objects.filter(username=username).exists():
-                print("User exists but password is incorrect.")
-            else:
-                print("User does not exist.")
-            raise AuthenticationFailed("Invalid username or password.")
+                print("User exists but authentication failed")
+                raise AuthenticationFailed("Invalid username or password.")
 
         if not user.is_active:
-            print("Account is inactive.")
+
             raise AuthenticationFailed("This account is inactive.")
 
         # Add role to the serializer context
