@@ -19,7 +19,7 @@ class CustomUser(AbstractUser):
     # common user fields
     email = models.EmailField(unique=True, blank=False)
     date_created = models.DateTimeField(auto_now_add=True)
-    image = models.ImageField(upload_to="", blank=True, null=True)
+    image = models.ImageField(upload_to="project_images/", blank=True, null=True)
 
     # Fields specific to 'Organisation'
     organisation_name = models.CharField(max_length=255, null=True, blank=True)
