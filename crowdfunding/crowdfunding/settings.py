@@ -40,38 +40,36 @@ import logging.config
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
-        },
-    },
     'handlers': {
-        'file': {
+        'console': {
             'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': 'collectstatic_debug.log',
-            'formatter': 'verbose',
+            'class': 'logging.StreamHandler',
         },
     },
     'loggers': {
-        'django': {
-            'handlers': ['file'],
+        'boto3': {
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
         },
-        'django.storage': {  # Specific logger for static storage
-            'handlers': ['file'],
+        'botocore': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
         },
-        'root': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
     },
 }
+
 
 logging.config.dictConfig(LOGGING)
 
