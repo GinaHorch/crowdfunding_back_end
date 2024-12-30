@@ -227,27 +227,53 @@ class ProjectUpdateView(APIView):
     def patch(self, request, pk):
         try:
             project = Project.objects.get(pk=pk)
-            print("Request Files in projects/views:", request.FILES)
-            if not request.FILES:
-                print("Request Files is empty")
+            print(f"Updating project: {project.title}")
         except Project.DoesNotExist:
             return Response({"detail": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
 
+        # Check if the current user is the project owner
         if request.user != project.organisation:
             return Response(
                 {"detail": "You do not have permission to edit this project."},
-                status=status.HTTP_403_FORBIDDEN
+                status=status.HTTP_403_FORBIDDEN,
             )
         
         data = request.data.copy()
-        if "image" in request.FILES:
-            data["image"] = request.FILES["image"]
-            print("Request Data in projects/views:", request.data)
         
+        # Handle image upload via S3
+        image = request.FILES.get("image")
+        if image:
+            print(f"Image detected for update: {image.name}")
+            try:
+                s3 = boto3.client(
+                    "s3",
+                    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+                    region_name=settings.AWS_S3_REGION_NAME,
+                )
+                # Upload image to S3
+                s3.upload_fileobj(
+                    image,
+                    settings.AWS_STORAGE_BUCKET_NAME,
+                    f"uploads/{image.name}"
+                )
+                # Update the image URL in the request data
+                data["image"] = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/uploads/{image.name}"
+                print(f"Image successfully uploaded to S3: {data['image']}")
+            except ClientError as e:
+                print(f"Error uploading image to S3: {e}")
+                return Response(
+                    {"detail": "Failed to upload image to S3."},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+
+        # Validate and update the project using the serializer
         serializer = ProjectSerializer(project, data=data, partial=True, context={"request": request})
         if serializer.is_valid():
             serializer.save()
+            print(f"Project updated successfully: {serializer.data}")
             return Response(serializer.data, status=status.HTTP_200_OK)
+        print(f"Validation errors: {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
