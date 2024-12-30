@@ -10,6 +10,9 @@ import os
 from .models import Project, Pledge, Category
 from .serializers import ProjectSerializer, PledgeSerializer, CategorySerializer, ProjectDetailSerializer, PledgeDetailSerializer
 from .permissions import IsOwnerOrReadOnly, IsSupporterOrReadOnly
+from botocore.exceptions import ClientError
+import boto3
+from django.conf import settings
 
 class ProjectPagination(PageNumberPagination):
    page_size = 10
@@ -34,16 +37,30 @@ class ProjectCreate(APIView):
                 {"detail": "Only organisations can create projects."},
                 status=status.HTTP_403_FORBIDDEN,
             )
-        # Get the image from the request
-        image = request.FILES.get('image')
-
         # Add organisation to the request data
         data = request.data.copy()
         data["organisation"] = request.user.id
 
+        # Get the image from the request
+        image = request.FILES.get('image')
         # If an image is provided, add it to the request data
         if image:
-            data["image"] = image
+            print("Image detected:", image.name)
+            s3 = boto3.client(
+                's3',
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+                region_name=settings.AWS_S3_REGION_NAME,
+            )
+            try:
+                s3.upload_fileobj(
+                    image,
+                    settings.AWS_STORAGE_BUCKET_NAME,
+                    f"uploads/{image.name}"
+                )
+                data["image"] = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/uploads/{image.name}"
+            except ClientError as e:
+                return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         # Validate and save the project
         try:
