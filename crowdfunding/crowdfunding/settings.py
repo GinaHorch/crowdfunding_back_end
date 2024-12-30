@@ -15,6 +15,7 @@ import os
 import dj_database_url
 from dotenv import load_dotenv
 from corsheaders.defaults import default_headers
+import logging.config
  
 load_dotenv("../.env")
 
@@ -40,14 +41,33 @@ LOGGING = {
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'level': 'DEBUG',
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'collectstatic_debug.log',
         },
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'WARNING',
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django.storage': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
     },
 }
-
+logging.config.dictConfig(LOGGING)
 
 ALLOWED_HOSTS = ["culture4kids-7a814d1e1904.herokuapp.com", "127.0.0.1", "localhost"]
 CORS_ORIGIN_ALLOW_ALL = False
@@ -195,6 +215,7 @@ AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazo
 # Static Files
 STATIC_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/static/"
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
+
 
 # only required locally
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
