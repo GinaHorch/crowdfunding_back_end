@@ -236,7 +236,7 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Additional S3 Settings for Public/Private Access Control
 AWS_QUERYSTRING_AUTH = False  # Disable query string authentication for public URLs
-AWS_DEFAULT_ACL = 'public-read'  # Set default ACL for public access (ensure this matches your S3 bucket policy)
+AWS_DEFAULT_ACL = None
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
