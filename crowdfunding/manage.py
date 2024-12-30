@@ -2,8 +2,9 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+import logging
 
-
+logging.getLogger('django').debug('Testing Django logging setup for collectstatic.')
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'crowdfunding.settings')

@@ -35,39 +35,41 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False').lower() == 'true'
 
+import logging.config
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'level': 'DEBUG',
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
         },
+    },
+    'handlers': {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filename': 'collectstatic_debug.log',
+            'formatter': 'verbose',
         },
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'file'],
+            'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': True,
         },
-        'django.request': {
-            'handlers': ['console', 'file'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-        'django.storage': {
-            'handlers': ['console', 'file'],
+        'django.storage': {  # Specific logger for static storage
+            'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': False,
         },
     },
 }
+
 logging.config.dictConfig(LOGGING)
+
 
 ALLOWED_HOSTS = ["culture4kids-7a814d1e1904.herokuapp.com", "127.0.0.1", "localhost"]
 CORS_ORIGIN_ALLOW_ALL = False
