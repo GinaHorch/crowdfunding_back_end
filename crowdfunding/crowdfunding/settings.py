@@ -233,6 +233,7 @@ STATICFILES_DIRS = [
 # Media Files
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+MEDIA_ROOT = 'media/'
 
 # Additional S3 Settings for Public/Private Access Control
 AWS_QUERYSTRING_AUTH = False  # Disable query string authentication for public URLs
