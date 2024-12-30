@@ -46,13 +46,13 @@ class ProjectCreate(APIView):
         # If an image is provided, add it to the request data
         if image:
             print("Image detected:", image.name)
-            s3 = boto3.client(
-                's3',
-                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-                region_name=settings.AWS_S3_REGION_NAME,
-            )
-            try:
+            try: 
+                s3 = boto3.client(
+                   's3',
+                   aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                   aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+                   region_name=settings.AWS_S3_REGION_NAME,
+                )
                 s3.upload_fileobj(
                     image,
                     settings.AWS_STORAGE_BUCKET_NAME,
@@ -64,6 +64,9 @@ class ProjectCreate(APIView):
                 print(f"Failed to upload {image.name} to S3: {e}")
                 return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+        else:
+            print("No image provided in request.")
+
         # Validate and save the project
         try:
             serializer = ProjectSerializer(data=data, context={"request": request})
@@ -74,6 +77,7 @@ class ProjectCreate(APIView):
         except Exception as e:
             print("Serializer Error:", str(e))  # Debug serializer errors
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
     
 class ProjectDetail(RetrieveUpdateDestroyAPIView):
     queryset = Project.objects.all()
