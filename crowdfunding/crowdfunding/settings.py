@@ -215,9 +215,8 @@ AWS_S3_REGION_NAME = 'ap-southeast-2'
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
 
 # Static Files
-STATIC_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/static/"
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
-
+STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # only required locally
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -226,7 +225,7 @@ STATICFILES_DIRS = [
 ]
 
 # Media Files
-MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/media/"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Additional S3 Settings for Public/Private Access Control
