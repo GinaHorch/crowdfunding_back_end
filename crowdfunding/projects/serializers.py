@@ -53,7 +53,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         
         # Use the model's create method to create the object
         return super().create(validated_data)
-            
+
 class CategorySerializer(serializers.ModelSerializer):
    class Meta:
       model = Category

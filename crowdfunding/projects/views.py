@@ -69,12 +69,15 @@ class ProjectCreate(APIView):
             print("No image provided in request.")
 
         # Validate and save the project
-        serializer = ProjectSerializer(data=data, context={"request": request})
-        if serializer.is_valid():
+        try:
+            serializer = ProjectSerializer(data=data, context={"request": request})
+            serializer.is_valid(raise_exception=True)
             print("Validated Data", serializer.validated_data)
-            project = serializer.save()
+            serializer.save()
+            print("Project created successfully:", serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
+        except Exception as e:
+            print("Serializer Error:", str(e))  # Debug serializer errors
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     
