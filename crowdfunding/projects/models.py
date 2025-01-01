@@ -15,7 +15,7 @@ class Project(models.Model):
    description = models.TextField()
    target_amount = models.IntegerField()
    current_amount = models.IntegerField(default=0)
-   image = models.ImageField(upload_to="project_images/", blank=True, null=True)
+   image = models.ImageField(upload_to="project_images/", blank=True, null=True, max_length=500)
    location = models.TextField()
    is_open = models.BooleanField(default=True)
    date_created = models.DateTimeField(auto_now_add=True)
