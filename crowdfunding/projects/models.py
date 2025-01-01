@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.conf import settings
+import boto3
 
 class Category(models.Model):
    name = models.CharField(max_length=100)
@@ -44,6 +46,24 @@ class Project(models.Model):
    
    def save(self, *args, **kwargs):
       self.clean()
+      if self.image and not str(self.image).startswith("http"):
+        # Upload image to S3 if it's a local file
+        s3 = boto3.client(
+            's3',
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            region_name=settings.AWS_S3_REGION_NAME,
+        )
+        try:
+            s3.upload_fileobj(
+                self.image.file,  # Upload the file-like object
+                settings.AWS_STORAGE_BUCKET_NAME,
+                f"project_images/{self.image.name}"
+            )
+            # Replace the image field with the S3 URL
+            self.image = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/project_images/{self.image.name}"
+        except Exception as e:
+            raise ValueError(f"Error uploading image to S3: {e}")
       super().save(*args, **kwargs)
     
 class Pledge(models.Model):

@@ -42,33 +42,6 @@ class ProjectCreate(APIView):
         data = request.data.copy()
         data["organisation"] = request.user.id
 
-        # Get the image from the request
-        image = request.FILES.get('image')
-        # If an image is provided, add it to the request data
-        if image:
-            print("Image detected:", image.name)
-            try: 
-                s3 = boto3.client(
-                   's3',
-                   aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                   aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-                   region_name=settings.AWS_S3_REGION_NAME,
-                )
-                s3.upload_fileobj(
-                    image,
-                    settings.AWS_STORAGE_BUCKET_NAME,
-                    f"project_images/{image.name}"
-                )
-                print(f"Successfully uploaded {image.name} to S3.") 
-                data["image"] = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/project_images/{image.name}"
-            except ClientError as e:
-                print(f"Failed to upload {image.name} to S3: {e}")
-                return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        else:
-            data["image"] = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/project_images/placeholder.webp"
-
-        print("Final Data Sent to Serializer:", data)
-
         # Validate and save the project
         try:
             serializer = ProjectSerializer(data=data, context={"request": request})
