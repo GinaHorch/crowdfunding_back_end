@@ -253,13 +253,13 @@ class ProjectUpdateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
-    def post(self, request):
-        print("Request Files:", request.FILES)
-        media_dir = settings.MEDIA_ROOT
-        if not os.access(media_dir, os.W_OK):
-            print(f"Media directory '{media_dir}' is not writable")
-        else:
-            print(f"Media directory '{media_dir}' is writable")
+    # def post(self, request):
+    #     print("Request Files:", request.FILES)
+    #     media_dir = settings.MEDIA_ROOT
+    #     if not os.access(media_dir, os.W_OK):
+    #         print(f"Media directory '{media_dir}' is not writable")
+    #     else:
+    #         print(f"Media directory '{media_dir}' is writable")
     
         
 def custom_404_view(request, exception=None):
