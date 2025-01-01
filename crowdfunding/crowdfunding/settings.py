@@ -18,6 +18,7 @@ from corsheaders.defaults import default_headers
 import logging.config
 import boto3
 import logging
+from storages.backends.s3boto3 import S3Boto3Storage
  
 load_dotenv("../.env")
 
@@ -222,9 +223,12 @@ AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazo
 print("AWS_ACCESS_KEY_ID:", AWS_ACCESS_KEY_ID)
 print("AWS_STORAGE_BUCKET_NAME:", AWS_STORAGE_BUCKET_NAME)
 
+class StaticStorage(S3Boto3Storage):
+    location = 'static'
+
 # Static Files
 STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATICFILES_STORAGE = 'myapp.storage_backends.StaticStorage'
 
 # only required locally
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Absolute path to the staticfiles directory
