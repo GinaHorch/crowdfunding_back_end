@@ -49,6 +49,15 @@ class ProjectSerializer(serializers.ModelSerializer):
       total = obj.pledges.aggregate(total=Sum('amount'))['total']
       return total or 0  # Default to 0 if there are no pledges
    
+   def validate_image(self, value):
+    # Allow URL strings or files
+    if isinstance(value, str) and value.startswith('https://'):
+        return value  # Valid S3 URL
+    if hasattr(value, 'file'):
+        return value  # Valid uploaded file
+    raise serializers.ValidationError("Invalid image format.")
+
+   
    def create(self, validated_data):
         print("Context:", self.context)
         print("Validated Data:", validated_data)

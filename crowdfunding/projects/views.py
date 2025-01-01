@@ -257,7 +257,7 @@ class ProjectUpdateView(APIView):
                 s3.upload_fileobj(
                     image,
                     settings.AWS_STORAGE_BUCKET_NAME,
-                    f"uploads/{image.name}"
+                    f"project_images/{image.name}"
                 )
                 # Update the image URL in the request data
                 data["image"] = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/project_images/{image.name}"
