@@ -49,6 +49,12 @@ class ProjectSerializer(serializers.ModelSerializer):
       total = obj.pledges.aggregate(total=Sum('amount'))['total']
       return total or 0  # Default to 0 if there are no pledges
    
+   def to_representation(self, instance):
+    """Override to log the image field during serialization."""
+    representation = super().to_representation(instance)
+    print(f"Serialized Image Field for instance {instance.id}: {representation.get('image')}")
+    return representation
+   
    def validate_image(self, value):
     # Allow URL strings or files
     if isinstance(value, str) and value.startswith('https://'):
