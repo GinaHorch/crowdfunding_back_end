@@ -45,6 +45,7 @@ class Project(models.Model):
          raise ValidationError("Current amount cannot exceed target amount.")
    
    def save(self, *args, **kwargs):
+      print(f"Image field before save: {self.image}")
       self.clean()
       if self.image and not str(self.image).startswith("http"):
         # Upload image to S3 if it's a local file
