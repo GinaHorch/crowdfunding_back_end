@@ -21,10 +21,21 @@ class ProjectSerializer(serializers.ModelSerializer):
    image = serializers.ImageField(allow_null=True, required=False)
    class Meta:
       model = Project
-      fields = ['id', 'title', 'description', 'target_amount', 
-                'current_amount', 'organisation', 'image',
-                'date_created', 'location',
-                'is_open', 'end_date', 'category', 'pledges' ]
+      fields = [
+         'id', 
+         'title', 
+         'description', 
+         'target_amount', 
+         'current_amount', 
+         'organisation', 
+         'image',
+         'date_created', 
+         'location',
+         'is_open', 
+         'end_date', 
+         'category', 
+         'pledges' 
+      ]
    pledges = serializers.SerializerMethodField()   # dynamically include pledges
    current_amount = serializers.SerializerMethodField()  # dynamically include current amount
 
@@ -37,12 +48,16 @@ class ProjectSerializer(serializers.ModelSerializer):
       """Calculate total pledged amount."""
       total = obj.pledges.aggregate(total=Sum('amount'))['total']
       return total or 0  # Default to 0 if there are no pledges
-
+   
    def create(self, validated_data):
         print("Context:", self.context)
         print("Validated Data:", validated_data)
         # Retrieve the user from the serializer's context
-        user = self.context['request'].user
+        if "image" not in validated_data or validated_data["image"] is None:
+            validated_data["image"] = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/project_images/placeholder.webp"
+
+        # Retrieve the user from the serializer's context
+        user = self.context["request"].user    
         
         # Ensure the user has the organisation role
         if not user.is_authenticated or not user.is_organisation():

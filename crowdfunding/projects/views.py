@@ -57,16 +57,16 @@ class ProjectCreate(APIView):
                 s3.upload_fileobj(
                     image,
                     settings.AWS_STORAGE_BUCKET_NAME,
-                    f"uploads/{image.name}"
+                    f"project_images/{image.name}"
                 )
                 print(f"Successfully uploaded {image.name} to S3.") 
-                data["image"] = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/uploads/{image.name}"
+                data["image"] = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/project_images/{image.name}"
             except ClientError as e:
                 print(f"Failed to upload {image.name} to S3: {e}")
                 return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         else:
-            print("No image provided in request.")
+            data["image"] = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/project_images/placeholder.webp"
 
         # Validate and save the project
         try:
@@ -260,7 +260,7 @@ class ProjectUpdateView(APIView):
                     f"uploads/{image.name}"
                 )
                 # Update the image URL in the request data
-                data["image"] = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/uploads/{image.name}"
+                data["image"] = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/project_images/{image.name}"
                 print(f"Image successfully uploaded to S3: {data['image']}")
             except ClientError as e:
                 print(f"Error uploading image to S3: {e}")
