@@ -62,7 +62,7 @@ class Project(models.Model):
                 f"project_images/{self.image.name}"
             )
             # Replace the image field with the S3 URL
-            self.image = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/project_images/{self.image.name}"
+            self.image = f"project_images/{self.image.name}"
         except Exception as e:
             raise ValueError(f"Error uploading image to S3: {e}")
       super().save(*args, **kwargs)
