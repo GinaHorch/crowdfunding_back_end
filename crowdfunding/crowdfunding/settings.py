@@ -16,6 +16,8 @@ import dj_database_url
 from dotenv import load_dotenv
 from corsheaders.defaults import default_headers
 import logging.config
+import boto3
+import logging
  
 load_dotenv("../.env")
 
@@ -72,7 +74,7 @@ LOGGING = {
 
 
 logging.config.dictConfig(LOGGING)
-
+boto3.set_stream_logger("boto3.resources", logging.DEBUG)
 
 ALLOWED_HOSTS = ["culture4kids-7a814d1e1904.herokuapp.com", "127.0.0.1", "localhost"]
 CORS_ORIGIN_ALLOW_ALL = False
