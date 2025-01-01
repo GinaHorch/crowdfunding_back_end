@@ -30,6 +30,7 @@ class ProjectCreate(APIView):
         print("Request Headers:", request.headers)
         print("Authenticated User:", request.user) 
         print("Request Data:", request.data)
+        print("Request Files:", request.FILES)
 
         # Ensure only organisations can create projects
         if not hasattr(request.user, "is_organisation") or not request.user.is_organisation():
@@ -68,14 +69,12 @@ class ProjectCreate(APIView):
             print("No image provided in request.")
 
         # Validate and save the project
-        try:
-            serializer = ProjectSerializer(data=data, context={"request": request})
-            serializer.is_valid(raise_exception=True)
+        serializer = ProjectSerializer(data=data, context={"request": request})
+        if serializer.is_valid():
             print("Validated Data", serializer.validated_data)
-            serializer.save()
+            project = serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        except Exception as e:
-            print("Serializer Error:", str(e))  # Debug serializer errors
+        else:
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     
