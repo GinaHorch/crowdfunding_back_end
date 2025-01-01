@@ -231,7 +231,7 @@ STATICFILES_DIRS = [
 ]
 
 # Media Files
-MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 MEDIA_ROOT = ""
 
