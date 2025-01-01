@@ -64,9 +64,10 @@ class ProjectCreate(APIView):
             except ClientError as e:
                 print(f"Failed to upload {image.name} to S3: {e}")
                 return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
         else:
             data["image"] = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/project_images/placeholder.webp"
+
+        print("Final Data Sent to Serializer:", data)
 
         # Validate and save the project
         try:

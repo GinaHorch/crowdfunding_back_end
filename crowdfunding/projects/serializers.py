@@ -60,7 +60,7 @@ class ProjectSerializer(serializers.ModelSerializer):
    
    def create(self, validated_data):
         print("Context:", self.context)
-        print("Validated Data:", validated_data)
+        print("Validated Data before save:", validated_data)
         # Retrieve the user from the serializer's context
         if "image" not in validated_data or validated_data["image"] is None:
             validated_data["image"] = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/project_images/placeholder.webp"
